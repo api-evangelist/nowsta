@@ -1,0 +1,51 @@
+generated: '2026-08-01'
+method: probed
+source: live HTTP probes 2026-08-01
+result: none
+summary: >-
+  Nowsta publishes no /.well-known/ discovery documents on any host. www.nowsta.com, nowsta.com and
+  app.nowsta.com all answer HTTP 200 for EVERY /.well-known/* path, but the body is the WordPress
+  homepage (383,708 bytes, title "Workforce Management Platform for Teams | Nowsta") or the app SPA
+  shell - a soft 404, not a published document. These 200s are the classic catch-all false positive
+  and are recorded as absent. The API host api.nowsta.com and the worker portal my.nowsta.com return
+  honest 404s. No security.txt, no OIDC/OAuth discovery, no api-catalog, no ai-plugin.json, no llms.txt,
+  no agent card.
+hosts:
+- host: www.nowsta.com
+  behaviour: soft-404 - every /.well-known/* path returns 200 with the homepage HTML
+- host: nowsta.com
+  behaviour: soft-404 - every /.well-known/* path returns 200 with the homepage HTML
+- host: app.nowsta.com
+  behaviour: soft-404 - every /.well-known/* path returns 200 with the SPA shell (2,099 bytes)
+- host: api.nowsta.com
+  behaviour: honest 404 for every /.well-known/* path
+- host: my.nowsta.com
+  behaviour: honest 404 for every /.well-known/* path
+documents:
+- path: /.well-known/security.txt
+  present: false
+  status_by_host: {www.nowsta.com: 200-html-soft404, api.nowsta.com: 404, my.nowsta.com: 404, app.nowsta.com: 200-html-soft404}
+- path: /.well-known/openid-configuration
+  present: false
+  status_by_host: {www.nowsta.com: 200-html-soft404, api.nowsta.com: 404, my.nowsta.com: 404, app.nowsta.com: 200-html-soft404}
+- path: /.well-known/oauth-authorization-server
+  present: false
+  status_by_host: {www.nowsta.com: 200-html-soft404, api.nowsta.com: 404, my.nowsta.com: 404, app.nowsta.com: 200-html-soft404}
+- path: /.well-known/oauth-protected-resource
+  present: false
+  status_by_host: {www.nowsta.com: 200-html-soft404, api.nowsta.com: 404, my.nowsta.com: 404, app.nowsta.com: 200-html-soft404}
+- path: /.well-known/api-catalog
+  present: false
+  status_by_host: {www.nowsta.com: 200-html-soft404, api.nowsta.com: 404, my.nowsta.com: 404, app.nowsta.com: 200-html-soft404}
+- path: /.well-known/ai-plugin.json
+  present: false
+  status_by_host: {www.nowsta.com: 200-html-soft404, api.nowsta.com: 404, my.nowsta.com: 404, app.nowsta.com: 200-html-soft404}
+- path: /.well-known/agent-card.json
+  present: false
+  status_by_host: {www.nowsta.com: 200-html-soft404, api.nowsta.com: 404, my.nowsta.com: 404, app.nowsta.com: 200-html-soft404}
+- path: /.well-known/agent.json
+  present: false
+  status_by_host: {www.nowsta.com: 200-html-soft404, api.nowsta.com: 404, my.nowsta.com: 404, app.nowsta.com: 200-html-soft404}
+- path: /llms.txt
+  present: false
+  status_by_host: {www.nowsta.com: 200-html-soft404, api.nowsta.com: 404, my.nowsta.com: 404, app.nowsta.com: 200-html-soft404}

@@ -1,0 +1,106 @@
+generated: '2026-08-01'
+method: searched
+source: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+docs: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+format: proprietary
+notes: >-
+  Nowsta does NOT use RFC 9457 problem+json. It publishes its own numeric error registry carried in a
+  simple envelope. Every error response body is `{"errors": [ERROR_OBJ, ...]}` where ERROR_OBJ is
+  `{"code": <integer>, "message": "<human readable>"}`. On 422 the envelope is nested instead: errors
+  are keyed by the index of the offending entity inside the submitted `publications` array, then by
+  field name, with an array of ERROR_OBJ per field (and a further `shifts` level for shift problems on
+  the events endpoint). Nowsta states that additional codes may be added in the future.
+  Verified live 2026-08-01: an unauthenticated POST to
+  https://api.nowsta.com/integrations/v1/events/publications returns
+  401 {"errors":[{"code":1000,"message":"Nil JSON web token"}]}.
+envelope:
+  content_type: application/json
+  shape: '{"errors": [{"code": <int>, "message": "<string>"}]}'
+  validation_shape: '{"publications": {"<index>": {"<field>": [ERROR_OBJ], "shifts": {"<index>": {"<field>": [ERROR_OBJ]}}}}}'
+statuses:
+- status: 202
+  title: Accepted
+  detail: >-
+    All successful publications return 202, not 200. Nowsta cannot guarantee every update is honoured
+    on receipt - without coordinator confirmation it will not remove shifts or shift slots that would
+    unassign staff (for example lowering shift quantity below the number assigned, or archiving an
+    event with assigned staff or published shifts). Other metadata changes in the same request are
+    still applied. The body returns the id of the queued job.
+- status: 401
+  title: Unauthorized
+  detail: The request auth token is missing or invalid. Body carries an array of ERROR_OBJ.
+- status: 403
+  title: Forbidden
+  detail: >-
+    The provided auth token does not authorize this action - the company is not active for the
+    integration, or the request references objects belonging to another company.
+- status: 422
+  title: Unprocessable Entity
+  detail: >-
+    Input parameters are invalid, absent, or the batch exceeded 32 items. The response mirrors the
+    request structure.
+problems:
+- code: 1000
+  title: Auth missing or invalid
+  status: 401
+  observed_message: Nil JSON web token
+  remediation: >-
+    Send the per-company integration token as `Authorization: Bearer <token>`. The customer retrieves
+    it from the Nowsta UI.
+  source_operation: openapi/nowsta-integration-openapi.yml#publishEvents
+- code: 1100
+  title: Access to referenced resource forbidden
+  status: 403
+  remediation: >-
+    The request references one or more objects that do not belong to the company associated with the
+    auth token. Only publish objects previously mapped under the same company token.
+- code: 1101
+  title: Access to integration forbidden
+  status: 403
+  remediation: >-
+    The company has not been marked active with your integration. Contact Nowsta to have the account
+    marked active - this is the allow-list gate on the whole API.
+- code: 1200
+  title: Parameter missing
+  status: 422
+  remediation: Supply every non-nullable parameter for the publication object.
+- code: 1201
+  title: Parameter cannot be null
+  status: 422
+  observed_message: Parameter cannot be null
+  remediation: >-
+    The field is marked non-nullable in the publication schema. Note that because publications are POST
+    and not PATCH, omitting a field sets it to its default of null - so an omission can surface as this
+    error.
+- code: 1202
+  title: Invalid param type
+  status: 422
+  remediation: Match the published types - ISO 8601 datetimes, integers for cents/quantity, booleans for supervisor.
+- code: 1203
+  title: Parameter size exceeds batch size limit
+  status: 422
+  remediation: Split the request - publication endpoints accept a maximum of 32 items per call.
+- code: 1204
+  title: Parameter is mutually exclusive with other parameters
+  status: 422
+  remediation: >-
+    On event publications, `venue_id` (a mapped venue) is mutually exclusive with the event-level venue
+    fields (`venue_name`, `address1`, `address2`, `city`, `state`, `zip`). Send one or the other.
+- code: 1300
+  title: Specified relation not found
+  status: 422
+  detail: Applies to uniform, venue, client and position references.
+  remediation: >-
+    Publish the referenced venue/client/uniform/position first so it has a registered mapping with
+    Nowsta, then republish the event or shift.
+- code: 1400
+  title: Starts at is after ends at
+  status: 422
+  remediation: Ensure `starts_at` is less than or equal to `ends_at` on both events and shifts.
+- code: 1500
+  title: Object nesting is ambiguous
+  status: 422
+  detail: >-
+    Currently only occurs when a shift is nested within a different event than the one it was
+    originally published with.
+  remediation: Keep each shift id nested under the event it was first published against.

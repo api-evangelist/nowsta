@@ -1,0 +1,808 @@
+openapi: 3.0.3
+info:
+  title: Nowsta Integration API
+  version: '1.0.0'
+  description: |-
+    The Nowsta Integration API lets an approved partner platform publish event, shift and position data
+    into Nowsta, along with the supporting system inputs — venues, clients, uniforms and workers — that
+    enrich that data.
+
+    The API is deliberately narrow: every resource is exposed through a single bulk "publications"
+    endpoint that accepts an array of objects and performs create-or-update by the caller's own external
+    `id`. There are no read (GET), PATCH or DELETE operations in the public integration surface.
+
+    Semantics published by Nowsta and preserved here:
+
+    * Every publication is a **POST, not a PATCH** — omitted fields are reset to their default (`null`),
+      so callers must send the complete object on every update.
+    * Every successful publication returns **202 Accepted** with the id of the queued job; Nowsta cannot
+      guarantee a request is honoured on receipt (for example it will not remove shifts or shift slots
+      that would unassign already-scheduled staff without coordinator confirmation).
+    * Batches are limited to **32 items**; larger batches are rejected with 422 / error code 1203.
+    * Publication requests for the same company are **queued and processed serially**, so callers are
+      advised to issue requests in series rather than in parallel.
+    * Access is **allow-listed**: Nowsta must approve a company before its token works, otherwise
+      requests return 403 with error code 1101.
+
+    DERIVATION NOTE — this document was transcribed by API Evangelist from Nowsta's own published
+    Integration API reference (the Slate-generated site formerly at https://developer.nowsta.com/,
+    captured at https://web.archive.org/web/20240603053309/https://developer.nowsta.com/). Every path,
+    method, field name, type, nullability, constraint, status code and error code below appears verbatim
+    in that reference. Nowsta does not publish a machine-readable specification; nothing here was
+    invented. The live production API was probed on 2026-08-01 and confirmed to still serve these paths
+    (unauthenticated POST returns `401 {"errors":[{"code":1000,"message":"Nil JSON web token"}]}`).
+  contact:
+    name: Nowsta
+    url: https://www.nowsta.com/
+  x-evidence:
+    generated: '2026-08-01'
+    method: generated
+    source: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+    original_docs_host: https://developer.nowsta.com/
+    original_docs_status: DNS NXDOMAIN as of 2026-08-01 (developer docs host decommissioned)
+    live_probe:
+      url: https://api.nowsta.com/integrations/v1/events/publications
+      method: POST
+      http_status: 401
+      body: '{"errors":[{"code":1000,"message":"Nil JSON web token"}]}'
+      fetched: '2026-08-01'
+externalDocs:
+  description: Nowsta Integration API reference (archived)
+  url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+servers:
+  - url: https://api.nowsta.com
+    description: Production
+  - url: https://api.nowsta-staging.com
+    description: Staging / demo (access granted by Nowsta on request)
+tags:
+  - name: Events
+    description: Bulk publication of events and their nested shifts.
+  - name: Venues
+    description: Bulk publication of venues referenced by events.
+  - name: Clients
+    description: Bulk publication of clients referenced by events.
+  - name: Uniforms
+    description: Bulk publication of uniforms referenced by events.
+  - name: Positions
+    description: Bulk publication of positions referenced by shifts.
+  - name: Workers
+    description: Bulk publication of company users (workers).
+security:
+  - bearerAuth: []
+paths:
+  /integrations/v1/events/publications:
+    post:
+      tags: [Events]
+      operationId: publishEvents
+      summary: Publish events and shifts
+      description: >-
+        Bulk create or update events and their nested shifts in a single call. The endpoint accepts up to
+        32 event publications per request. Each event is matched on the caller's own `id`. Because the
+        action is a POST rather than a PATCH, any omitted field is reset to `null` — for example an event
+        previously published with a `client_id` and then republished without one will have its client
+        cleared. Nowsta advises keeping the number of shifts per event to roughly 20-30 or the request
+        can become slow, especially in batch. Setting `archived_at` signals that the event has been
+        cancelled or otherwise removed and should not appear in the Nowsta UI.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [publications]
+              properties:
+                publications:
+                  type: array
+                  maxItems: 32
+                  items:
+                    $ref: '#/components/schemas/EventPublication'
+            example:
+              publications:
+                - id: '125A'
+                  name: My Example Event
+                  starts_at: '2015-11-04T09:20:22Z'
+                  ends_at: '2015-11-05T09:20:22Z'
+                  worker_instructions: Show up on time wearing nice clothing.
+                  time_zone: America/Los_Angeles
+                  admin_notes: Run payroll carefully for this event.
+                  supervisor_notes: Be sure to gather time and attendance data
+                  budget_cents: 45000
+                  venue_id: '122B'
+                  uniform_id: '165X'
+                  client_id: 87RU
+                  invoice_cents: 65000
+                  salesperson: John Smith
+                  archived_at: null
+                  display_id: E12345
+                  shifts:
+                    - id: 15Q
+                      starts_at: '2015-11-04T09:20:22Z'
+                      ends_at: '2015-11-05T09:20:22Z'
+                      quantity: 8
+                      position_id: 189F
+                      instructions: Bring your own bartending utensils.
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /integrations/v1/venues/publications:
+    post:
+      tags: [Venues]
+      operationId: publishVenues
+      summary: Publish venues
+      description: >-
+        Bulk create or update venues on Nowsta, matched on the caller's own `id`. Venue names carry a
+        uniqueness constraint in Nowsta, so a submitted name that collides with an existing one will be
+        altered by Nowsta to preserve uniqueness — which is one reason the response is 202 rather than
+        200. Omitted fields are reset to `null`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [publications]
+              properties:
+                publications:
+                  type: array
+                  maxItems: 32
+                  items:
+                    $ref: '#/components/schemas/VenuePublication'
+            example:
+              publications:
+                - id: '125A'
+                  name: Jerry's Apartment
+                  address1: 129 West 81 Street
+                  address2: 5A
+                  city: New York
+                  state: NY
+                  zip: '10024'
+                  contact_phone_number: '2015556893'
+                  contact_email: JS@Kramerica.biz
+                  contact_full_name: Jerome Allen Seinfeld
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /integrations/v1/clients/publications:
+    post:
+      tags: [Clients]
+      operationId: publishClients
+      summary: Publish clients
+      description: >-
+        Bulk create or update clients on Nowsta, matched on the caller's own `id`. Client names carry a
+        uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest.
+        Omitted fields are reset to `null`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [publications]
+              properties:
+                publications:
+                  type: array
+                  maxItems: 32
+                  items:
+                    $ref: '#/components/schemas/ClientPublication'
+            example:
+              publications:
+                - id: '125A'
+                  name: Vandelay Industries
+                  admin_notes: Great architecture firm
+                  supervisor_notes: Ask about the LaTex and LaTeX-related products.
+                  company_user_notes: Notes workers see
+                  contact_phone_number: '2015556893'
+                  contact_email: GC@Vandel.ly
+                  contact_full_name: Arthur Vandelay
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /integrations/v1/uniforms/publications:
+    post:
+      tags: [Uniforms]
+      operationId: publishUniforms
+      summary: Publish uniforms
+      description: >-
+        Bulk create or update uniforms on Nowsta, matched on the caller's own `id`. Uniform names carry a
+        uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest.
+        Omitted fields are reset to `null`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [publications]
+              properties:
+                publications:
+                  type: array
+                  maxItems: 32
+                  items:
+                    $ref: '#/components/schemas/UniformPublication'
+            example:
+              publications:
+                - id: '125A'
+                  name: The puffy shirt
+                  description: Wear if you wanna be a pirate.
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /integrations/v1/positions/publications:
+    post:
+      tags: [Positions]
+      operationId: publishPositions
+      summary: Publish positions
+      description: >-
+        Bulk create or update positions on Nowsta, matched on the caller's own `id`. Position names carry
+        a uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest.
+        Positions are referenced by shifts via `position_id`. Omitted fields are reset to `null`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [publications]
+              properties:
+                publications:
+                  type: array
+                  maxItems: 32
+                  items:
+                    $ref: '#/components/schemas/PositionPublication'
+            example:
+              publications:
+                - id: '125A'
+                  name: Comedian
+                  default_rate_cents: 3500
+                  instructions: Make lots of jokes.
+                  description: The most important position.
+                  supervisor: false
+                  pay_code: 456-123
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+  /integrations/v1/workers/publications:
+    post:
+      tags: [Workers]
+      operationId: publishWorkers
+      summary: Publish workers
+      description: >-
+        Bulk create or update workers (company users) on Nowsta, matched on the caller's own `id`.
+        Worker records are partly shared across every company a person works for, so update rules are
+        restricted. Freely updatable via this endpoint - `start_date`, `notes`, `rank`, `pronouns`,
+        `tablet_access_code`, `payroll_id`, and `email`/`phone_number` (the latter two only when the
+        worker has not yet set up an account, by resending the same `id` with a different value).
+        Updating `first_name`, `last_name`, `address1`, `address2`, `state`, `city`, `zip`, `birthday`,
+        `emergency_contact_name`, `emergency_contact_phone_number`, `pronouns` or `nickname`
+        desynchronizes the worker record between your company and the shared cross-company record;
+        Nowsta then offers a re-sync, after which those fields can no longer be updated through this
+        endpoint.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [publications]
+              properties:
+                publications:
+                  type: array
+                  maxItems: 32
+                  items:
+                    $ref: '#/components/schemas/CompanyUserPublication'
+            example:
+              publications:
+                - id: 1W
+                  first_name: John
+                  last_name: Smith
+                  email: john@nowsta.com
+                  start_date: '2022-01-01T12:00:00Z'
+                  birthday: '2000-01-01'
+                  notes: The notes
+                  zip: '25554'
+                  nickname: a nickname
+                  emergency_contact_phone_number: '2125555555'
+                  city: City x
+                  rank: '1'
+                  pronouns: Her
+                  tablet_access_code: 123CODE
+                  state: NY
+                  phone_number: '2125555559'
+                  payroll_id: 123-PAY
+                  emergency_contact_name: Johnnys Saver
+                  address1: 129 West 81 Street
+                  address2: 122 West 84 Street
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: >-
+        A per-company integration token issued by Nowsta and retrieved by the customer from the Nowsta
+        UI, then entered into the integrating platform (for example on a settings page). The token is
+        scoped to the single company that purchased the integration and only authorizes operations for
+        that company. Send it as `Authorization: Bearer <token>`. HTTPS is required; cross-origin
+        browser requests are not permitted. Nowsta must first approve a company for the integration —
+        requests on behalf of an unapproved company return 403 with error code 1101.
+  responses:
+    Accepted:
+      description: >-
+        Accepted and queued. Nowsta returns 202 because it cannot always guarantee that an update will
+        be honoured on receipt — in particular it will not remove shifts or shift slots that would
+        unassign staff without coordinator confirmation, and colliding venue/client/uniform/position
+        names are altered to preserve uniqueness. The body carries the id of the queued job.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PublicationAccepted'
+          example:
+            id: 123
+    Unauthorized:
+      description: The request auth token is missing or invalid (error code 1000).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorsResponse'
+          example:
+            errors:
+              - code: 1000
+                message: Nil JSON web token
+    Forbidden:
+      description: >-
+        The provided auth token does not authorize this action — either the company has not been marked
+        active for the integration (code 1101) or the request references objects belonging to another
+        company (code 1100).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorsResponse'
+          example:
+            errors:
+              - code: 1101
+                message: Access to integration forbidden
+    UnprocessableEntity:
+      description: >-
+        Some input parameters are invalid or absent, or the batch exceeded the 32-item limit. The body
+        mirrors the request structure - each invalid parameter is mapped to an array of error objects,
+        keyed by the index of the offending entity in the original request (and nested under `shifts`
+        for shift-level problems on the events endpoint).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableEntityBody'
+          example:
+            publications:
+              '0':
+                starts_at:
+                  - code: 1400
+                    message: Starts at is after ends at
+                shifts:
+                  '1':
+                    position_id:
+                      - code: 1300
+                        message: Specified relation not found
+  schemas:
+    ErrorObject:
+      type: object
+      description: >-
+        The ERROR_OBJ used throughout every error response - a numeric `code` plus a human-readable
+        `message`.
+      properties:
+        code:
+          type: integer
+          description: Nowsta error code. See errors/nowsta-problem-types.yml for the published registry.
+          example: 1201
+        message:
+          type: string
+          example: Parameter cannot be null
+    ErrorsResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+    UnprocessableEntityBody:
+      type: object
+      description: >-
+        Validation failures keyed by the index of the entity in the submitted `publications` array. Each
+        field maps to an array of ERROR_OBJ. Nowsta publishes the shape but not a strict schema, so this
+        is modelled as a free-form object rather than invented.
+      properties:
+        publications:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+    PublicationAccepted:
+      type: object
+      description: The id of the publication request, indicating receipt and insertion into Nowsta's job queue.
+      properties:
+        id:
+          type: integer
+          example: 123
+    ShiftPublication:
+      type: object
+      description: A shift nested inside an event publication (SHIFT_PUBLICATION).
+      required: [id, starts_at, ends_at, quantity, position_id]
+      properties:
+        id:
+          type: string
+          maxLength: 255
+          description: Your own external identifier for the shift.
+        starts_at:
+          type: string
+          format: date-time
+          description: ISO 8601. Must be less than or equal to ends_at.
+        ends_at:
+          type: string
+          format: date-time
+          description: ISO 8601.
+        quantity:
+          type: integer
+          minimum: 0
+          maximum: 1024
+          description: Number of workers required for the shift.
+        position_id:
+          type: string
+          description: Must have a registered mapping with Nowsta (see publishPositions).
+        instructions:
+          type: string
+          nullable: true
+    EventPublication:
+      type: object
+      description: An event and its shifts (EVENT_PUBLICATION).
+      required: [id, name, starts_at, ends_at, time_zone, shifts]
+      properties:
+        id:
+          type: string
+          maxLength: 255
+          description: Your own external identifier for the event.
+        name:
+          type: string
+          maxLength: 255
+        starts_at:
+          type: string
+          format: date-time
+          description: ISO 8601. Must be less than or equal to ends_at.
+        ends_at:
+          type: string
+          format: date-time
+          description: ISO 8601.
+        time_zone:
+          type: string
+          description: >-
+            Canonical tz database entry (e.g. "America/New_York"), not a UTC offset.
+        shifts:
+          type: array
+          description: >-
+            SHIFT_PUBLICATION objects. Nowsta advises no more than roughly 20-30 shifts per event.
+          items:
+            $ref: '#/components/schemas/ShiftPublication'
+        venue_id:
+          type: string
+          nullable: true
+          description: >-
+            Must have a registered mapping with Nowsta. Mutually exclusive with the event-level venue
+            fields (venue_name, address1, address2, city, state, zip) — sending both returns 422 with
+            error code 1204.
+        uniform_id:
+          type: string
+          nullable: true
+          description: Must have a registered mapping with Nowsta.
+        client_id:
+          type: string
+          nullable: true
+          description: Must have a registered mapping with Nowsta.
+        division:
+          type: string
+          nullable: true
+          description: >-
+            A plain string that maps to a Division object in Nowsta. An existing division with the same
+            name is reused; otherwise the publication creates a new one. Divisions are an umbrella
+            category for events and staff, typically reserved for enterprise customers with multiple
+            regional operations — Nowsta asks to be consulted before this field is used.
+        booking_status:
+          type: string
+          nullable: true
+        archived_at:
+          type: string
+          format: date-time
+          nullable: true
+          description: >-
+            Presence indicates the event has been cancelled or otherwise removed and should not appear
+            in the Nowsta UI.
+        display_id:
+          type: string
+          nullable: true
+        admin_notes:
+          type: string
+          nullable: true
+        worker_instructions:
+          type: string
+          nullable: true
+        supervisor_notes:
+          type: string
+          nullable: true
+        salesperson:
+          type: string
+          maxLength: 255
+          nullable: true
+        budget_cents:
+          type: integer
+          minimum: 0
+          nullable: true
+        invoice_cents:
+          type: integer
+          minimum: 0
+          nullable: true
+        number_of_guests:
+          type: integer
+          nullable: true
+        venue_name:
+          type: string
+          nullable: true
+          description: Event-level venue field. Mutually exclusive with venue_id.
+        address1:
+          type: string
+          nullable: true
+          description: Event-level venue field. Mutually exclusive with venue_id.
+        address2:
+          type: string
+          nullable: true
+          description: Event-level venue field. Mutually exclusive with venue_id.
+        city:
+          type: string
+          nullable: true
+          description: Event-level venue field. Mutually exclusive with venue_id.
+        state:
+          type: string
+          nullable: true
+          description: Event-level venue field. Mutually exclusive with venue_id.
+        zip:
+          type: string
+          nullable: true
+          description: Event-level venue field. Mutually exclusive with venue_id.
+    VenuePublication:
+      type: object
+      description: VENUE_PUBLICATION.
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        address1:
+          type: string
+          maxLength: 255
+          nullable: true
+        address2:
+          type: string
+          maxLength: 255
+          nullable: true
+        city:
+          type: string
+          maxLength: 255
+          nullable: true
+        state:
+          type: string
+          nullable: true
+          description: 2 characters preferred (e.g. "NY").
+        zip:
+          type: string
+          maxLength: 255
+          nullable: true
+        notes:
+          type: string
+          nullable: true
+        contact_phone_number:
+          type: string
+          maxLength: 255
+          nullable: true
+        contact_email:
+          type: string
+          maxLength: 255
+          nullable: true
+        contact_full_name:
+          type: string
+          maxLength: 255
+          nullable: true
+    ClientPublication:
+      type: object
+      description: CLIENT_PUBLICATION.
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+        admin_notes:
+          type: string
+          nullable: true
+        supervisor_notes:
+          type: string
+          nullable: true
+        company_user_notes:
+          type: string
+          nullable: true
+          description: Notes that workers see.
+        contact_phone_number:
+          type: string
+          maxLength: 255
+          nullable: true
+        contact_email:
+          type: string
+          maxLength: 255
+          nullable: true
+        contact_full_name:
+          type: string
+          maxLength: 255
+          nullable: true
+    UniformPublication:
+      type: object
+      description: UNIFORM_PUBLICATION.
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+          nullable: true
+    PositionPublication:
+      type: object
+      description: POSITION_PUBLICATION.
+      required: [id, name, supervisor]
+      properties:
+        id:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        default_rate_cents:
+          type: integer
+          nullable: true
+          description: Must be positive.
+        client_bill_rate_cents:
+          type: integer
+          nullable: true
+          description: Must be positive.
+        instructions:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        supervisor:
+          type: boolean
+        pay_code:
+          type: string
+          maxLength: 255
+          nullable: true
+    CompanyUserPublication:
+      type: object
+      description: COMPANY_USER_PUBLICATION — a worker.
+      required: [id, first_name, last_name, email]
+      properties:
+        id:
+          type: string
+          maxLength: 255
+        first_name:
+          type: string
+          maxLength: 255
+        last_name:
+          type: string
+          maxLength: 255
+        email:
+          type: string
+          maxLength: 255
+        start_date:
+          type: string
+          format: date
+          nullable: true
+          description: ISO 8601.
+        birthday:
+          type: string
+          format: date
+          nullable: true
+          description: ISO 8601.
+        notes:
+          type: string
+          nullable: true
+        zip:
+          type: string
+          maxLength: 5
+          nullable: true
+        nickname:
+          type: string
+          nullable: true
+        emergency_contact_phone_number:
+          type: string
+          nullable: true
+          description: Valid US phone number.
+        city:
+          type: string
+          maxLength: 255
+          nullable: true
+        rank:
+          type: integer
+          nullable: true
+        pronouns:
+          type: string
+          nullable: true
+        tablet_access_code:
+          type: string
+          nullable: true
+        state:
+          type: string
+          maxLength: 255
+          nullable: true
+        phone_number:
+          type: string
+          nullable: true
+          description: Valid US phone number.
+        payroll_id:
+          type: string
+          nullable: true
+        emergency_contact_name:
+          type: string
+          nullable: true
+        address1:
+          type: string
+          maxLength: 255
+          nullable: true
+          description: >-
+            Documented as `address_1` in the parameter table and as `address1` in the request example;
+            transcribed here as published in the example payload.
+        address2:
+          type: string
+          maxLength: 255
+          nullable: true
+          description: >-
+            Documented as `address_2` in the parameter table and as `address2` in the request example;
+            transcribed here as published in the example payload.

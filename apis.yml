@@ -1,23 +1,146 @@
 aid: nowsta
 name: Nowsta
-description: 'Nowsta is a company surfaced via the API Evangelist harvest backlog (source: secondary-market)
-  and added to the network as a stub for full-pipeline profiling.'
+description: >-
+  Nowsta is a Brooklyn, New York workforce management platform for hourly, gig and contingent labor,
+  used by more than 25,000 teams across hospitality and food service, events and venues, healthcare,
+  logistics and distribution, education and retail. The platform covers the full shift lifecycle -
+  talent sourcing and onboarding with a built-in ATS, AI-assisted shift scheduling with demand
+  forecasting and templates, GPS/geofenced time and attendance with automated alerts and timesheet
+  approval, labor-cost and compliance reporting, and payroll/accounting handoff - alongside a vendor
+  management module for coordinating staffing agencies. Workers use a dedicated iOS/Android app and the
+  my.nowsta.com portal to claim shifts, set availability and clock in; coordinators work in
+  app.nowsta.com. For partners, Nowsta publishes an allow-listed Integration API that lets an upstream
+  system (event management, CRM, catering or venue software) publish events, shifts, positions, venues,
+  clients, uniforms and workers into Nowsta in bulk.
+image: https://www.nowsta.com/wp-content/uploads/2025/02/cropped-nowsta-favicon-v2-270x270.png
 url: https://raw.githubusercontent.com/api-evangelist/nowsta/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-x-tier: stub
-x-tier-reason: harvest
-specificationVersion: '0.20'
+specificationVersion: '0.21'
 created: '2026-08-01'
 modified: '2026-08-01'
 tags:
-- Company
-apis: []
+- workforce-management
+- staff-scheduling
+- shift-scheduling
+- time-and-attendance
+- hourly-workforce
+- gig-work
+- event-staffing
+- hospitality
+- staffing-agency
+- vendor-management
+- payroll
+- human-resources
+apis:
+- name: Nowsta Integration API
+  description: >-
+    Allow-listed partner API for publishing workforce data into Nowsta. Six bulk "publications"
+    endpoints - events (with nested shifts), venues, clients, uniforms, positions and workers - each
+    accepting up to 32 objects per request and performing create-or-update keyed on the caller's own
+    external id. Authentication is a per-company bearer token that the customer retrieves from the
+    Nowsta UI; Nowsta must approve a company before its token is active. Every successful publication
+    returns 202 Accepted with a queued-job id, because Nowsta will not apply changes that would
+    unassign already-scheduled staff without coordinator confirmation. There are no read, PATCH or
+    DELETE operations in the public surface, and no documented webhook or event stream.
+  humanURL: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  baseURL: https://api.nowsta.com
+  tags:
+  - workforce-management
+  - shift-scheduling
+  - event-staffing
+  - hourly-workforce
+  - bulk-publication
+  properties:
+  - type: OpenAPI
+    url: openapi/nowsta-integration-openapi.yml
+  - type: APIReference
+    name: Nowsta Integration API reference (archived - developer.nowsta.com no longer resolves)
+    url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  - type: Overlay
+    url: overlays/nowsta-integration-overlay.yaml
+  - type: ErrorCatalog
+    url: errors/nowsta-problem-types.yml
+  - type: Conventions
+    url: conventions/nowsta-conventions.yml
+  - type: Idempotency
+    url: conventions/nowsta-conventions.yml
+  - type: DataModel
+    url: data-model/nowsta-data-model.yml
+  - type: Authentication
+    url: authentication/nowsta-authentication.yml
+  - type: Sandbox
+    url: sandbox/nowsta-sandbox.yml
+  - type: RateLimits
+    name: Batch limit - 32 items per publication request
+    url: conventions/nowsta-conventions.yml
+  - type: IntegrationAddendum
+    url: https://www.nowsta.com/integration-addendum/
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: AgenticAccess
+  url: agentic-access/nowsta-agentic-access.yml
 - type: Website
-  url: https://forgeglobal.com/nowsta_stock/
+  url: https://www.nowsta.com/
+- type: APIReference
+  name: Nowsta Integration API reference (archived)
+  url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+- type: Support
+  url: https://community.nowsta.com/support/tickets/new
+- type: HelpCenter
+  url: https://intercom.help/nowstasupport/en/
+- type: Blog
+  url: https://www.nowsta.com/blog/
+- type: BlogRSS
+  url: https://www.nowsta.com/feed/
+- type: GitHubOrganization
+  url: https://github.com/Nowsta
+- type: StatusPage
+  url: https://status.nowsta.com/
+- type: Login
+  name: Customer sign in
+  url: https://app.nowsta.com/
+- type: Demo
+  url: https://www.nowsta.com/demo/
+- type: TermsOfService
+  url: https://www.nowsta.com/terms-and-conditions/
+- type: PrivacyPolicy
+  url: https://www.nowsta.com/privacy-policy/
+- type: CookiePolicy
+  url: https://www.nowsta.com/cookie-policy/
+- type: Lifecycle
+  url: lifecycle/nowsta-lifecycle.yml
+- type: Conformance
+  url: conformance/nowsta-conformance.yml
+- type: WellKnown
+  url: well-known/nowsta-well-known.yml
+- type: DomainSecurity
+  url: security/nowsta-domain-security.yml
+- type: MCPServer
+  name: Candidate MCP tool surface derived from the Integration API (not published by Nowsta)
+  url: mcp/nowsta-mcp.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: LLMsTxt
+  url: llms/nowsta-llms.txt
+- type: iOSApp
+  url: https://apps.apple.com/us/app/nowsta-workers/id1172538924
+- type: AndroidApp
+  url: https://play.google.com/store/apps/details?id=com.nowsta.workers
+- type: LinkedIn
+  url: https://www.linkedin.com/company/nowsta
+- type: X
+  url: https://x.com/nowsta
+- type: Facebook
+  url: https://www.facebook.com/nowsta
+- type: Instagram
+  url: https://www.instagram.com/nowsta/
+x-enrichment:
+  date: '2026-08-01'
+  status: enriched
+  artifacts_added: 15
+  pass: local-v1

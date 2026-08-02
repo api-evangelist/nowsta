@@ -1,0 +1,58 @@
+generated: '2026-08-01'
+method: searched
+source: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+docs: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+spec_source: openapi/nowsta-integration-openapi.yml
+summary:
+  types:
+  - http
+  http_schemes:
+  - bearer
+  oauth2_flows: []
+  api_key_in: []
+  model: static per-company bearer token, allow-listed by the provider
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  header: Authorization
+  format: 'Bearer <token>'
+  description: >-
+    A per-company integration token issued by Nowsta. The customer retrieves it from the Nowsta UI and
+    enters it into the integrating platform (for example on a settings page); the platform then sends
+    it on every request as `Authorization: Bearer <token>`.
+  sources:
+  - openapi/nowsta-integration-openapi.yml
+  properties:
+    rotation_documented: false
+    expiry_documented: false
+    scopes: none - the token is not scoped, it authorizes every operation for the company
+    tenancy: >-
+      One token per company. A token is bound to the single company that purchased the integration and
+      only authorizes operations for that company; referencing another company's objects returns 403
+      with error code 1100.
+    self_serve: false
+    approval_gate: >-
+      Nowsta must approve a company before its token is active. Requests on behalf of an unapproved
+      company return 403 with error code 1101.
+    transport: >-
+      HTTPS required - Nowsta warns HTTP may give unexpected results. Cross-origin browser requests are
+      not permitted, so the credential is intended for server-to-server use only.
+    challenge: >-
+      No WWW-Authenticate challenge is returned. A missing or invalid token yields
+      401 {"errors":[{"code":1000,"message":"Nil JSON web token"}]} (verified live 2026-08-01).
+    token_format_hint: >-
+      The 401 message text is "Nil JSON web token", implying the credential is a JWT internally, but
+      Nowsta documents it only as an opaque token and publishes no claims, issuer, audience or expiry.
+oauth2: false
+openid_connect: false
+mutual_tls: false
+api_keys: false
+notes:
+- >-
+  There is no OAuth 2.0, no OIDC discovery document and no scope surface, so no scopes/ artifact is
+  emitted for this provider - see conformance/nowsta-conformance.yml.
+- >-
+  The single unscoped, non-expiring, company-wide write token is the main authorization weakness of
+  this API: there is no way to grant an integration read-only or resource-limited access, and no
+  documented rotation or revocation procedure.

@@ -1,0 +1,87 @@
+generated: '2026-08-01'
+method: derived
+source: openapi/nowsta-integration-openapi.yml + https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+summary: >-
+  Nowsta's Integration API is a plain JSON-over-HTTPS bulk-write surface. It claims no industry
+  standard and conforms to very few cross-cutting ones: bearer tokens without OAuth, a proprietary
+  numeric error registry rather than RFC 9457, and no discovery, event or hypermedia standards. Nowsta
+  publishes no compliance certifications (no SOC 2 / ISO 27001 / HIPAA statement was found on
+  nowsta.com or any trust subdomain), which is notable given the platform handles worker PII and
+  serves healthcare and education customers.
+standards:
+- id: openapi
+  conforms: false
+  evidence: >-
+    Nowsta publishes no machine-readable specification. The OpenAPI in this repo was transcribed by API
+    Evangelist from Nowsta's own published reference.
+- id: oauth2
+  conforms: false
+  evidence: No oauth2 securityScheme; a static per-company bearer token is issued through the Nowsta UI.
+- id: oidc
+  conforms: false
+  evidence: No /.well-known/openid-configuration on any host.
+- id: rfc6750-bearer-token
+  conforms: partial
+  evidence: >-
+    Uses the RFC 6750 `Authorization: Bearer <token>` form, but the token is a static long-lived
+    credential rather than an OAuth 2.0 access token, and no WWW-Authenticate challenge is returned on
+    401.
+- id: rfc9457-problem-details
+  conforms: false
+  evidence: >-
+    Errors use application/json with a proprietary `{"errors":[{"code","message"}]}` envelope, not
+    application/problem+json. See errors/nowsta-problem-types.yml.
+- id: rfc9116-security-txt
+  conforms: false
+  evidence: No /.well-known/security.txt on any Nowsta host (probed 2026-08-01).
+- id: rfc8594-sunset-header
+  conforms: false
+  evidence: No Sunset or Deprecation header support and no deprecation policy.
+- id: rfc8615-well-known
+  conforms: false
+  evidence: >-
+    No well-known documents published; www.nowsta.com soft-404s every /.well-known/* path with the
+    homepage.
+- id: json-api
+  conforms: false
+  evidence: Plain JSON; no JSON:API document structure, type/id resource objects or content type.
+- id: asyncapi
+  conforms: false
+  evidence: No webhooks, callbacks, event catalog or streaming surface is documented.
+- id: iso8601-datetimes
+  conforms: true
+  evidence: >-
+    All datetime fields (starts_at, ends_at, archived_at, start_date, birthday) are specified as ISO
+    8601.
+- id: iana-tz-database
+  conforms: true
+  evidence: >-
+    `time_zone` on event publications must be a canonical tz database entry (e.g. "America/New_York"),
+    explicitly not a UTC offset.
+- id: https-only
+  conforms: true
+  evidence: >-
+    HTTPS is required; Nowsta warns HTTP may produce unexpected results. HSTS with a one-year max-age
+    and includeSubDomains observed on api.nowsta.com.
+- id: rate-limit-headers
+  conforms: false
+  evidence: >-
+    No RateLimit / RateLimit-Policy headers and no 429. The only throughput contract is a 32-item batch
+    limit enforced with 422 / code 1203.
+- id: idempotency-key-header
+  conforms: false
+  evidence: >-
+    No Idempotency-Key header. Retry safety comes from full-object upsert on a caller-supplied external
+    id instead - see conventions/nowsta-conventions.yml.
+compliance:
+  certifications_published: []
+  detail: >-
+    Searched nowsta.com for /security, /trust, /compliance and probed trust.nowsta.com and
+    security.nowsta.com on 2026-08-01 - none resolve or exist (www.nowsta.com soft-404s to the
+    homepage). No SOC 2, ISO 27001, PCI DSS, HIPAA, FedRAMP or CSA STAR claim was found. No `Compliance`
+    pointer is emitted in apis.yml because there is no published compliance program to point at.
+  privacy_documents:
+  - https://www.nowsta.com/privacy-policy/
+  - https://www.nowsta.com/cookie-policy/
+  - https://www.nowsta.com/terms-and-conditions/
+  - https://www.nowsta.com/integration-addendum/

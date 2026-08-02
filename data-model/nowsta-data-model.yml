@@ -1,0 +1,146 @@
+generated: '2026-08-01'
+method: derived
+source: openapi/nowsta-integration-openapi.yml
+summary: >-
+  Six publishable entities plus one nested child. Events are the hub: an event owns its shifts inline
+  and points at a venue, a client and a uniform; each shift points at a position. Workers are published
+  independently and are not linked to shifts through this API - assignment happens inside Nowsta, not
+  through the partner surface. Every reference uses the partner's own external id, so referenced
+  entities must be published before the entities that reference them.
+identifiers:
+  style: caller-supplied external string ids
+  max_length: 255
+  prefixes: none - Nowsta does not publish typed id prefixes
+  note: >-
+    Cross-reference fields (venue_id, client_id, uniform_id, position_id) carry the PARTNER's id, not a
+    Nowsta id. Nowsta maintains the mapping internally and calls a resolvable reference a "registered
+    mapping"; an unresolvable one returns 422 with error code 1300.
+entities:
+- name: Event
+  schema: EventPublication
+  operation: publishEvents
+  description: A staffed event with a time window, timezone, budget, invoice value and nested shifts.
+  key: id
+- name: Shift
+  schema: ShiftPublication
+  operation: publishEvents
+  description: >-
+    A time-boxed staffing requirement inside an event - a position plus a quantity of workers needed
+    (0-1024). Published only as a child of an event; there is no standalone shift endpoint.
+  key: id
+- name: Venue
+  schema: VenuePublication
+  operation: publishVenues
+  description: A physical location with address and contact details.
+  key: id
+- name: Client
+  schema: ClientPublication
+  operation: publishClients
+  description: The customer an event is being staffed for, with contact and note fields.
+  key: id
+- name: Uniform
+  schema: UniformPublication
+  operation: publishUniforms
+  description: A dress-code definition referenced by an event.
+  key: id
+- name: Position
+  schema: PositionPublication
+  operation: publishPositions
+  description: >-
+    A role with default pay rate, client bill rate, supervisor flag and payroll pay code. Referenced by
+    shifts.
+  key: id
+- name: Worker
+  schema: CompanyUserPublication
+  operation: publishWorkers
+  description: >-
+    A company user - the person who works shifts. Carries PII (name, email, phone, address, birthday,
+    emergency contact, payroll id). Partly shared across every company the person works for.
+  key: id
+- name: Division
+  schema: null
+  operation: publishEvents
+  description: >-
+    Not a publishable entity. The event-level `division` field is a plain string that Nowsta maps to a
+    Division object, reusing an existing one by name or creating a new one. Divisions are an umbrella
+    grouping for events and staff, typically for enterprise customers with multiple regional
+    operations; Nowsta asks to be consulted before the field is used.
+  key: name
+relationships:
+- from: Event
+  to: Shift
+  type: has_many
+  via: shifts
+  detail: Nested inline in the event publication. Nowsta advises roughly 20-30 shifts per event maximum.
+- from: Shift
+  to: Position
+  type: belongs_to
+  via: position_id
+  required: true
+- from: Event
+  to: Venue
+  type: belongs_to
+  via: venue_id
+  required: false
+  detail: >-
+    Mutually exclusive with the event-level venue fields (venue_name, address1, address2, city, state,
+    zip). Sending both returns 422 / code 1204.
+- from: Event
+  to: Client
+  type: belongs_to
+  via: client_id
+  required: false
+- from: Event
+  to: Uniform
+  type: belongs_to
+  via: uniform_id
+  required: false
+- from: Event
+  to: Division
+  type: belongs_to
+  via: division
+  required: false
+  detail: Resolved by name rather than by id; creates the division if the name is new.
+publish_order:
+  - Publish Venues, Clients, Uniforms and Positions first - they are the referenced entities.
+  - Publish Workers independently at any time.
+  - Publish Events last, with shifts nested, referencing the ids established above.
+notes:
+- >-
+  Worker has NO relationship to Shift or Event in this API. Assigning a worker to a shift is a Nowsta-
+  side action; the partner surface only supplies demand (shifts and quantities) and roster (workers).
+- >-
+  Worker records are partly shared across companies. `start_date`, `notes`, `rank`, `pronouns`,
+  `tablet_access_code` and `payroll_id` are freely updatable; `email` and `phone_number` only while the
+  worker has not yet created an account. Updating name, address, city, state, zip, birthday, nickname,
+  pronouns or emergency contact desynchronizes the company-local record from the shared one, and once
+  re-synced those fields can no longer be updated through this endpoint.
+- >-
+  Venue, Client, Uniform and Position names are unique inside Nowsta. A colliding name is silently
+  altered on ingest, so the stored name may differ from the published one.
+pii:
+  entities: [Worker, Venue, Client]
+  fields:
+  - Worker.first_name
+  - Worker.last_name
+  - Worker.email
+  - Worker.phone_number
+  - Worker.birthday
+  - Worker.address1
+  - Worker.address2
+  - Worker.city
+  - Worker.state
+  - Worker.zip
+  - Worker.emergency_contact_name
+  - Worker.emergency_contact_phone_number
+  - Worker.payroll_id
+  - Venue.contact_full_name
+  - Venue.contact_email
+  - Venue.contact_phone_number
+  - Client.contact_full_name
+  - Client.contact_email
+  - Client.contact_phone_number
+  note: >-
+    publishWorkers is the highest-sensitivity operation in the API - it transmits full worker identity,
+    contact, birthday, home address, emergency contact and payroll identifier. Treat it accordingly in
+    any agent or automation context.

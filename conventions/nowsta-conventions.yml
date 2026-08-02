@@ -1,0 +1,145 @@
+generated: '2026-08-01'
+method: searched
+source: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+docs: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+summary: >-
+  Nowsta's Integration API is a write-only bulk publication surface. Every resource is exposed through
+  one POST endpoint that takes a `publications` array and performs create-or-update keyed on the
+  caller's own external id. There are no reads, so there is no pagination, filtering, sparse fields or
+  expansion. Retry safety comes from full-object upsert semantics rather than an idempotency key.
+
+transport:
+  https_required: true
+  http_note: Nowsta warns that HTTP may produce unexpected results; HTTPS is required.
+  browser_calls: >-
+    Not supported - cross-origin requests from a web browser are not allowed. The API is
+    server-to-server.
+  content_type: application/json
+  accept: application/json
+  note: All endpoints expect to receive JSON and return JSON.
+
+authentication:
+  style: bearer-token
+  header: 'Authorization: Bearer <token>'
+  scope: >-
+    One token per company. Each token is associated with the single company that purchased the
+    integration and only authorizes operations for that company.
+  provisioning: >-
+    The customer obtains their token in the Nowsta UI and enters it into the integrating platform (for
+    example on a settings page). Nowsta must first approve the company - unapproved companies get 403
+    with error code 1101.
+  see: authentication/nowsta-authentication.yml
+
+idempotency:
+  supported: true
+  mechanism: natural-key-upsert
+  header: none
+  key_field: >-
+    `id` on each publication object - the caller's own external identifier (255 char limit), used by
+    Nowsta to match an existing record or create a new one.
+  semantics: >-
+    Every publication endpoint is a full-object create-or-update. Replaying the identical request body
+    converges on the same state, so a retry after a timeout or a 5xx is safe and will not create
+    duplicates. This is upsert idempotency, not request-replay idempotency - Nowsta publishes no
+    `Idempotency-Key` header and no dedupe window, and it does not return a cached prior response on
+    replay (a replay produces a new queued-job id).
+  caveat: >-
+    Because the verb is POST and not PATCH, a partial payload is NOT a partial update. Omitted fields
+    are reset to their default of `null`. An event first published with a `client_id` and then
+    republished without one has its client cleared in Nowsta. Callers must always send the complete
+    object.
+  asymmetry: >-
+    Nowsta will not honour a change that would unassign already-scheduled staff (dropping shift
+    quantity below the assigned count, or archiving an event with assigned staff / published shifts)
+    without coordinator confirmation, so a replayed request is safe but is not guaranteed to be fully
+    applied. Other metadata in the same request still lands.
+
+concurrency:
+  model: per-company serial queue
+  detail: >-
+    Until a publication request completes, all other publication requests for the same company are
+    queued - though the API returns immediately. Requests are processed in the order received.
+  guidance: >-
+    Nowsta explicitly recommends issuing requests in serial rather than in parallel so that updates are
+    applied in the intended order.
+
+batching:
+  style: array-in-body
+  parameter: publications
+  max_items: 32
+  over_limit_behaviour: 422 with error code 1203
+  nested_guidance: >-
+    Nowsta advises keeping shifts per event to roughly 20-30 objects or the request can become slow,
+    especially when many events are sent in one batch.
+
+rate_limits:
+  documented: false
+  detail: >-
+    Nowsta publishes no requests-per-second/minute quota, no 429 status, and no RateLimit response
+    headers. The only published throughput constraint is the 32-item batch limit plus the per-company
+    serial processing queue.
+  see: errors/nowsta-problem-types.yml
+
+async_processing:
+  success_status: 202
+  body: '{"id": <int>}'
+  meaning: >-
+    The id is the identifier of the publication request, indicating receipt and insertion into Nowsta's
+    job queue - not the id of the created object. Application of the change is asynchronous.
+  callback: >-
+    None published. Nowsta documents no webhook, callback, polling endpoint or status endpoint for
+    checking whether a queued publication was applied, so a partner cannot programmatically confirm the
+    outcome of a 202.
+
+pagination:
+  applicable: false
+  reason: The public surface has no read operations.
+expansion:
+  applicable: false
+metadata:
+  applicable: false
+  detail: >-
+    No generic metadata bag. Free-text carriers exist per resource - admin_notes, supervisor_notes,
+    worker_instructions, company_user_notes, notes, instructions, description, display_id.
+
+request_tracing:
+  request_id_header: X-Request-Id
+  direction: response
+  observed: '2026-08-01'
+  evidence: >-
+    api.nowsta.com returns `X-Request-Id` and `X-Runtime` on responses (observed on a live probe of
+    /integrations/v1/events/publications). Nowsta does not document this header, so treat it as an
+    observed platform behaviour (Rails/Rack default) rather than a published contract.
+
+versioning:
+  scheme: uri-path
+  current: v1
+  pattern: /integrations/v1/<resource>/publications
+  see: lifecycle/nowsta-lifecycle.yml
+
+errors:
+  envelope: '{"errors": [{"code": <int>, "message": "<string>"}]}'
+  registry: errors/nowsta-problem-types.yml
+  rfc9457: false
+
+identifiers:
+  style: caller-supplied external ids
+  detail: >-
+    The partner supplies its own `id` (string, 255 char limit) for every event, shift, venue, client,
+    uniform, position and worker. Nowsta maintains the mapping. Cross-references between objects
+    (venue_id, client_id, uniform_id, position_id) use the caller's ids, not Nowsta ids, so referenced
+    objects must be published before the objects that reference them.
+
+uniqueness:
+  detail: >-
+    Venue, client, uniform and position names carry a uniqueness constraint inside Nowsta. If a
+    published name collides with an existing one, Nowsta alters the incoming name to preserve
+    uniqueness - which is another reason the response is 202 rather than 200. The name you sent is not
+    guaranteed to be the name stored.
+
+cross_references:
+- authentication/nowsta-authentication.yml
+- errors/nowsta-problem-types.yml
+- lifecycle/nowsta-lifecycle.yml
+- data-model/nowsta-data-model.yml
+- sandbox/nowsta-sandbox.yml

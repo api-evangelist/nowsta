@@ -1,0 +1,86 @@
+overlay: 1.0.0
+info:
+  title: API Evangelist enhancements for the Nowsta Integration API
+  version: 1.0.0
+extends: openapi/nowsta-integration-openapi.yml
+x-provenance:
+  generated: '2026-08-01'
+  method: generated
+  source: >-
+    API Evangelist enrichment pass. Captures the annotations added on top of Nowsta's own published
+    reference (https://web.archive.org/web/20240603053309/https://developer.nowsta.com/) so the
+    transcribed base document stays faithful to what Nowsta published.
+actions:
+- target: $.info
+  update:
+    x-apievangelist-enriched: '2026-08-01'
+    x-apievangelist-artifacts:
+      conventions: conventions/nowsta-conventions.yml
+      errors: errors/nowsta-problem-types.yml
+      authentication: authentication/nowsta-authentication.yml
+      data-model: data-model/nowsta-data-model.yml
+      lifecycle: lifecycle/nowsta-lifecycle.yml
+      sandbox: sandbox/nowsta-sandbox.yml
+      conformance: conformance/nowsta-conformance.yml
+    x-docs-status: >-
+      Provider documentation host developer.nowsta.com no longer resolves; the API is still live. This
+      specification is a transcription of the last archived reference.
+- target: $.info
+  update:
+    x-idempotency:
+      supported: true
+      mechanism: natural-key-upsert
+      key_field: id
+      header: none
+      note: >-
+        Every publication endpoint is a full-object create-or-update keyed on the caller's external id,
+        so replaying an identical request body is safe. Omitted fields reset to null.
+- target: $.info
+  update:
+    x-batching:
+      parameter: publications
+      max_items: 32
+      over_limit: 422 / error code 1203
+    x-concurrency:
+      model: per-company serial queue
+      guidance: issue publication requests in series, not in parallel
+- target: $.paths['/integrations/v1/workers/publications'].post
+  update:
+    x-pii: true
+    x-pii-fields:
+    - first_name
+    - last_name
+    - email
+    - phone_number
+    - birthday
+    - address1
+    - address2
+    - city
+    - state
+    - zip
+    - emergency_contact_name
+    - emergency_contact_phone_number
+    - payroll_id
+    x-agentic-access:
+      action-class: acting
+      consequence: write
+      human-in-the-loop: recommended
+      note: >-
+        Transmits full worker identity and payroll identifiers, and can desynchronize a worker record
+        that is shared across every company that person works for.
+- target: $.paths['/integrations/v1/events/publications'].post
+  update:
+    x-destructive-potential: true
+    x-note: >-
+      Because the verb is POST and not PATCH, republishing an event with fields omitted clears those
+      fields, and setting archived_at cancels the event in the Nowsta UI. Nowsta will not remove shifts
+      or shift slots that would unassign staff without coordinator confirmation, so a 202 does not mean
+      the whole request was applied.
+- target: $.paths['/integrations/v1/positions/publications'].post
+  update:
+    x-financial-fields:
+    - default_rate_cents
+    - client_bill_rate_cents
+    x-note: >-
+      Positions carry the default worker pay rate and the client bill rate; republishing a position
+      without them resets both to null.

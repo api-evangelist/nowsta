@@ -1,0 +1,61 @@
+generated: '2026-08-01'
+method: probed
+source: live DNS/TLS/HTTP probes of apis.yml + OpenAPI hosts
+notes: >-
+  The web.archive.org / archive.org rows produced by the mechanical probe were removed - they are an
+  artefact of the API humanURL pointing at the archived Nowsta developer reference (Nowsta's own docs
+  host, developer.nowsta.com, no longer resolves) and say nothing about Nowsta's security posture.
+  api.nowsta.com returns no HSTS header on the root path (which 404s), but does send
+  `Strict-Transport-Security: max-age=31536000; includeSubDomains` on the real integration paths -
+  observed 2026-08-01 on POST /integrations/v1/events/publications.
+hosts:
+- host: www.nowsta.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep  6 14:36:26 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+- host: api.nowsta.com
+  https: true
+  tls_version: TLSv1.3
+  cert_expires: Sep 27 12:54:15 2026 GMT
+  hsts: true
+  hsts_max_age: 31536000
+  hsts_include_subdomains: true
+  hsts_observed_on: POST /integrations/v1/events/publications
+- host: app.nowsta.com
+  https: true
+  reachable: true
+- host: my.nowsta.com
+  https: true
+  reachable: true
+- host: status.nowsta.com
+  https: true
+  reachable: true
+  provider: Atlassian Statuspage
+domains:
+- domain: nowsta.com
+  dnssec: false
+  caa: []
+  spf: true
+  dmarc: true
+  dmarc_policy: none
+findings:
+- id: no-dnssec
+  severity: low
+  detail: nowsta.com is not DNSSEC signed.
+- id: no-caa
+  severity: low
+  detail: >-
+    No CAA records published for nowsta.com, so certificate issuance is not constrained to named CAs.
+- id: dmarc-policy-none
+  severity: medium
+  detail: >-
+    DMARC is published but the policy is p=none (monitor only), so spoofed mail claiming to be from
+    nowsta.com is reported but not rejected or quarantined.
+- id: no-security-txt
+  severity: medium
+  detail: >-
+    No /.well-known/security.txt on any Nowsta host. www.nowsta.com answers 200 for every
+    /.well-known/* path with the WordPress homepage (soft 404), which is a false positive, not a
+    published document - see well-known/nowsta-well-known.yml.

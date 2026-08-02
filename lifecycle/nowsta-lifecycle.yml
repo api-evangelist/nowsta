@@ -1,0 +1,65 @@
+generated: '2026-08-01'
+method: searched
+source: https://status.nowsta.com/ + https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+versioning:
+  scheme: uri-path
+  current: v1
+  pattern: /integrations/v1/<resource>/publications
+  policy_published: false
+  detail: >-
+    The version is pinned in the path (`/integrations/v1/`). Nowsta publishes no version-support policy,
+    no version-sunset schedule and no list of prior versions. v1 has been the only published version
+    since at least the 2023 archive of the developer reference.
+deprecation:
+  policy_url: null
+  policy_published: false
+  sunset_header: false
+  deprecation_header: false
+  detail: >-
+    No RFC 8594 Sunset support, no Deprecation header, and no published deprecation policy. No
+    operation in the harvested spec is marked deprecated.
+sla:
+  url: null
+  uptime_target: null
+  detail: >-
+    No public SLA or uptime commitment. The status page reports observed uptime but does not state a
+    target.
+status_page:
+  url: https://status.nowsta.com/
+  provider: Atlassian Statuspage
+  observed: '2026-08-01'
+  state: All Systems Operational
+  components:
+  - name: Scheduling, Time Tracking, and Payroll
+    uptime_90d: 100.0%
+  - name: Messaging
+    uptime_90d: 100.0%
+  - name: 3rd Party Integrations
+    uptime_90d: 100.0%
+  feeds:
+    atom: https://status.nowsta.com/history.atom
+    rss: https://status.nowsta.com/history.rss
+  subscribe: [email, slack]
+  incidents_recent: none reported in the window shown on 2026-08-01
+changelog:
+  published: false
+  detail: >-
+    Nowsta publishes no dated API changelog, release notes page or versioned release feed. The status
+    page history feed is the only dated public signal, and it covers incidents rather than API changes.
+roadmap:
+  published: false
+docs_lifecycle:
+  developer_portal: https://developer.nowsta.com/
+  state: decommissioned
+  observed: '2026-08-01'
+  detail: >-
+    The Slate-generated Nowsta Integration API reference at developer.nowsta.com no longer resolves -
+    DNS returns NXDOMAIN. The API itself is still live (an unauthenticated POST to
+    https://api.nowsta.com/integrations/v1/events/publications returns the documented
+    401 / code 1000 on 2026-08-01), so the contract is running without published documentation. The
+    last full capture is https://web.archive.org/web/20240603053309/https://developer.nowsta.com/ and
+    is the source for this repo's OpenAPI, error catalog and conventions.
+  risk: >-
+    A live but undocumented API is a real integration risk for partners: there is no current canonical
+    reference, no changelog to detect drift, and no deprecation signal.
+deprecated_operations: []

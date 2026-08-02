@@ -1,0 +1,45 @@
+generated: '2026-08-01'
+method: searched
+source: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+summary: >-
+  Nowsta operates a separate staging environment with its own hostname and its own tokens, and grants
+  partners a demo account on it. Access is request-based, not self-serve - there is no public sandbox
+  signup, no sandbox key page and no published test fixtures.
+environments:
+- name: production
+  base_url: https://api.nowsta.com
+  keys: per-company bearer token retrieved by the customer from the Nowsta UI
+- name: staging
+  base_url: https://api.nowsta-staging.com
+  keys: separate staging tokens issued with the demo account
+  access: >-
+    Request-based. Nowsta's guidance - "To develop and test your integration, contact us and we will
+    give you access to a demo account on our staging server."
+  dns_note: >-
+    api.nowsta-staging.com does not resolve from the public internet as of 2026-08-01 (NXDOMAIN),
+    consistent with an environment that is opened per partner rather than left publicly addressable.
+    Recorded as published-but-gated, not as absent.
+separation:
+  mode: separate-host
+  key_prefixes: none published
+  detail: >-
+    Test and live are separated by hostname and by token, not by a key prefix or a mode flag. There is
+    no documented way to tell a staging token from a production token by inspection.
+guidance:
+  quote: >-
+    "We highly recommend that you start by contacting us and making sure that the integration works in
+    a staging environment before using the production URL and keys."
+test_values:
+  published: false
+  detail: >-
+    Nowsta publishes no magic test identifiers, no fixture generator, no time simulation / test clocks
+    and no trigger tooling. The only concrete values in the reference are illustrative example payloads
+    (event id "125A", shift id "15Q", worker id "1W", position "Comedian"), which are documentation
+    examples rather than reserved test values - do not treat them as working fixtures.
+self_serve: false
+approval_required: true
+approval_detail: >-
+  Nowsta must approve a company before its integration token works in production; requests on behalf of
+  an unapproved company return 403 with error code 1101.
+legal:
+  integration_addendum: https://www.nowsta.com/integration-addendum/
