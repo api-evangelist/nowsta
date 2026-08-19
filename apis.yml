@@ -16,7 +16,7 @@ image: https://www.nowsta.com/wp-content/uploads/2025/02/cropped-nowsta-favicon-
 url: https://raw.githubusercontent.com/api-evangelist/nowsta/refs/heads/main/apis.yml
 x-type: company
 x-source: harvest:secondary-market
-specificationVersion: '0.21'
+specificationVersion: '0.23'
 created: '2026-08-01'
 modified: '2026-08-01'
 tags:
