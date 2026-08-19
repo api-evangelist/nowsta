@@ -2,13 +2,12 @@ generated: '2026-08-01'
 method: derived
 status: candidate
 source: openapi/nowsta-integration-openapi.yml
-search_result: >-
-  No Nowsta MCP server exists. Searched the Nowsta site, the help center (intercom.help/nowstasupport),
-  the archived developer reference, the github.com/Nowsta organization (9 repos, all forks of
-  third-party libraries, 8 of them archived - no Nowsta-authored SDK, CLI or MCP server), npm (0 results
-  for "nowsta"), RubyGems (0), Packagist (0), NuGet (404) and PyPI. Probed for /.well-known/ MCP and
-  OAuth protected-resource metadata on every Nowsta host - none. This is a candidate tool surface
-  derived from the Integration API, NOT something Nowsta publishes.
+search_result: No Nowsta MCP server exists. Searched the Nowsta site, the help center (intercom.help/nowstasupport),
+  the archived developer reference, the github.com/Nowsta organization (9 repos, all forks of third-party
+  libraries, 8 of them archived - no Nowsta-authored SDK, CLI or MCP server), npm (0 results for "nowsta"),
+  RubyGems (0), Packagist (0), NuGet (404) and PyPI. Probed for /.well-known/ MCP and OAuth protected-resource
+  metadata on every Nowsta host - none. This is a candidate tool surface derived from the Integration
+  API, NOT something Nowsta publishes.
 server:
   name: nowsta
   transport: http
@@ -16,56 +15,56 @@ server:
   published_by_provider: false
 auth:
   scheme: bearer
-  detail: >-
-    A per-company Nowsta integration token would have to be supplied to any MCP server built on this
-    surface. The token is not scoped - it authorizes every write operation for the whole company - so
-    an MCP deployment should add its own guardrails.
+  detail: A per-company Nowsta integration token would have to be supplied to any MCP server built on
+    this surface. The token is not scoped - it authorizes every write operation for the whole company
+    - so an MCP deployment should add its own guardrails.
 caveats:
-- >-
-  Every operation in this API is a WRITE. There are no read operations, so an agent using these tools
-  cannot inspect current state before or after changing it, and cannot verify what a 202 actually
-  applied.
-- >-
-  Nowsta returns 202 Accepted with a queued-job id and publishes no way to poll that job, so tool
-  results are inherently unconfirmed.
-- >-
-  Publications are full-object upserts - a tool call built from a partial object will silently clear
-  the fields it omits. Any MCP tool over this API must require the complete object.
-- >-
-  publish_workers transmits worker PII (name, email, phone, home address, birthday, emergency contact,
+- Every operation in this API is a WRITE. There are no read operations, so an agent using these tools
+  cannot inspect current state before or after changing it, and cannot verify what a 202 actually applied.
+- Nowsta returns 202 Accepted with a queued-job id and publishes no way to poll that job, so tool results
+  are inherently unconfirmed.
+- Publications are full-object upserts - a tool call built from a partial object will silently clear the
+  fields it omits. Any MCP tool over this API must require the complete object.
+- publish_workers transmits worker PII (name, email, phone, home address, birthday, emergency contact,
   payroll id) and can desynchronize a record shared across employers. It should be gated behind human
   approval in any agent deployment.
 tools:
 - name: publish_events
-  description: >-
-    Bulk create or update events and their nested shifts in Nowsta (max 32 events per call). Full-object
-    upsert keyed on your external event id; omitted fields are cleared.
+  description: Bulk create or update events and their nested shifts in Nowsta (max 32 events per call).
+    Full-object upsert keyed on your external event id; omitted fields are cleared.
   source_operation: openapi/nowsta-integration-openapi.yml#publishEvents
   write: true
   confirmation: recommended
 - name: publish_venues
-  description: Bulk create or update venues in Nowsta (max 32 per call). Full-object upsert keyed on your external venue id.
+  description: Bulk create or update venues in Nowsta (max 32 per call). Full-object upsert keyed on your
+    external venue id.
   source_operation: openapi/nowsta-integration-openapi.yml#publishVenues
   write: true
 - name: publish_clients
-  description: Bulk create or update clients in Nowsta (max 32 per call). Full-object upsert keyed on your external client id.
+  description: Bulk create or update clients in Nowsta (max 32 per call). Full-object upsert keyed on
+    your external client id.
   source_operation: openapi/nowsta-integration-openapi.yml#publishClients
   write: true
 - name: publish_uniforms
-  description: Bulk create or update uniforms in Nowsta (max 32 per call). Full-object upsert keyed on your external uniform id.
+  description: Bulk create or update uniforms in Nowsta (max 32 per call). Full-object upsert keyed on
+    your external uniform id.
   source_operation: openapi/nowsta-integration-openapi.yml#publishUniforms
   write: true
 - name: publish_positions
-  description: >-
-    Bulk create or update positions in Nowsta (max 32 per call), including default worker pay rate and
-    client bill rate. Full-object upsert keyed on your external position id.
+  description: Bulk create or update positions in Nowsta (max 32 per call), including default worker pay
+    rate and client bill rate. Full-object upsert keyed on your external position id.
   source_operation: openapi/nowsta-integration-openapi.yml#publishPositions
   write: true
   confirmation: recommended
 - name: publish_workers
-  description: >-
-    Bulk create or update workers in Nowsta (max 32 per call). Transmits worker PII and payroll
+  description: Bulk create or update workers in Nowsta (max 32 per call). Transmits worker PII and payroll
     identifiers; some fields desynchronize the cross-company shared worker record.
   source_operation: openapi/nowsta-integration-openapi.yml#publishWorkers
   write: true
   confirmation: required
+deployment:
+  mode: none
+  verified: derived
+  tools: 6
+  checked: '2026-08-12'
+  source: catalog MCP census

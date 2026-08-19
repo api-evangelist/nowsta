@@ -1,0 +1,154 @@
+{
+  "opencollection": "1.0.0",
+  "info": {
+    "name": "Nowsta Integration API",
+    "version": "1.0.0"
+  },
+  "request": {
+    "auth": {
+      "type": "bearer",
+      "token": "{{bearerToken}}"
+    }
+  },
+  "items": [
+    {
+      "info": {
+        "name": "Events",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Publish events and shifts",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.nowsta.com/integrations/v1/events/publications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk create or update events and their nested shifts in a single call. The endpoint accepts up to 32 event publications per request. Each event is matched on the caller's own `id`. Because the action is a POST rather than a PATCH, any omitted field is reset to `null` — for example an event previously published with a `client_id` and then republished without one will have its client cleared. Nowsta advises keeping the number of shifts per event to roughly 20-30 or the request can become slow, esp"
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Venues",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Publish venues",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.nowsta.com/integrations/v1/venues/publications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk create or update venues on Nowsta, matched on the caller's own `id`. Venue names carry a uniqueness constraint in Nowsta, so a submitted name that collides with an existing one will be altered by Nowsta to preserve uniqueness — which is one reason the response is 202 rather than 200. Omitted fields are reset to `null`."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Clients",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Publish clients",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.nowsta.com/integrations/v1/clients/publications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk create or update clients on Nowsta, matched on the caller's own `id`. Client names carry a uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest. Omitted fields are reset to `null`."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Uniforms",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Publish uniforms",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.nowsta.com/integrations/v1/uniforms/publications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk create or update uniforms on Nowsta, matched on the caller's own `id`. Uniform names carry a uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest. Omitted fields are reset to `null`."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Positions",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Publish positions",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.nowsta.com/integrations/v1/positions/publications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk create or update positions on Nowsta, matched on the caller's own `id`. Position names carry a uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest. Positions are referenced by shifts via `position_id`. Omitted fields are reset to `null`."
+        }
+      ]
+    },
+    {
+      "info": {
+        "name": "Workers",
+        "type": "folder"
+      },
+      "items": [
+        {
+          "info": {
+            "name": "Publish workers",
+            "type": "http"
+          },
+          "http": {
+            "method": "POST",
+            "url": "https://api.nowsta.com/integrations/v1/workers/publications",
+            "body": {
+              "type": "json",
+              "data": "{}"
+            }
+          },
+          "docs": "Bulk create or update workers (company users) on Nowsta, matched on the caller's own `id`. Worker records are partly shared across every company a person works for, so update rules are restricted. Freely updatable via this endpoint - `start_date`, `notes`, `rank`, `pronouns`, `tablet_access_code`, `payroll_id`, and `email`/`phone_number` (the latter two only when the worker has not yet set up an account, by resending the same `id` with a different value). Updating `first_name`, `last_name`, `add"
+        }
+      ]
+    }
+  ],
+  "bundled": true
+}

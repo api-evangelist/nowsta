@@ -1,0 +1,1698 @@
+{
+  "item": [
+    {
+      "id": "fb4dcfc4-f063-4dc2-bbb4-e996c593fd80",
+      "name": "Events",
+      "description": {
+        "content": "Bulk publication of events and their nested shifts.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "f142f8c9-4352-4fca-8ef1-0bcb24ee104d",
+          "name": "Publish events and shifts",
+          "request": {
+            "name": "Publish events and shifts",
+            "description": {
+              "content": "Bulk create or update events and their nested shifts in a single call. The endpoint accepts up to 32 event publications per request. Each event is matched on the caller's own `id`. Because the action is a POST rather than a PATCH, any omitted field is reset to `null` — for example an event previously published with a `client_id` and then republished without one will have its client cleared. Nowsta advises keeping the number of shifts per event to roughly 20-30 or the request can become slow, especially in batch. Setting `archived_at` signals that the event has been cancelled or otherwise removed and should not appear in the Nowsta UI.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "integrations",
+                "v1",
+                "events",
+                "publications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"starts_at\": \"<dateTime>\",\n      \"ends_at\": \"<dateTime>\",\n      \"time_zone\": \"<string>\",\n      \"shifts\": [\n        {\n          \"id\": \"<string>\",\n          \"starts_at\": \"<dateTime>\",\n          \"ends_at\": \"<dateTime>\",\n          \"quantity\": \"<integer>\",\n          \"position_id\": \"<string>\",\n          \"instructions\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"starts_at\": \"<dateTime>\",\n          \"ends_at\": \"<dateTime>\",\n          \"quantity\": \"<integer>\",\n          \"position_id\": \"<string>\",\n          \"instructions\": \"<string>\"\n        }\n      ],\n      \"venue_id\": \"<string>\",\n      \"uniform_id\": \"<string>\",\n      \"client_id\": \"<string>\",\n      \"division\": \"<string>\",\n      \"booking_status\": \"<string>\",\n      \"archived_at\": \"<dateTime>\",\n      \"display_id\": \"<string>\",\n      \"admin_notes\": \"<string>\",\n      \"worker_instructions\": \"<string>\",\n      \"supervisor_notes\": \"<string>\",\n      \"salesperson\": \"<string>\",\n      \"budget_cents\": \"<integer>\",\n      \"invoice_cents\": \"<integer>\",\n      \"number_of_guests\": \"<integer>\",\n      \"venue_name\": \"<string>\",\n      \"address1\": \"<string>\",\n      \"address2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"starts_at\": \"<dateTime>\",\n      \"ends_at\": \"<dateTime>\",\n      \"time_zone\": \"<string>\",\n      \"shifts\": [\n        {\n          \"id\": \"<string>\",\n          \"starts_at\": \"<dateTime>\",\n          \"ends_at\": \"<dateTime>\",\n          \"quantity\": \"<integer>\",\n          \"position_id\": \"<string>\",\n          \"instructions\": \"<string>\"\n        },\n        {\n          \"id\": \"<string>\",\n          \"starts_at\": \"<dateTime>\",\n          \"ends_at\": \"<dateTime>\",\n          \"quantity\": \"<integer>\",\n          \"position_id\": \"<string>\",\n          \"instructions\": \"<string>\"\n        }\n      ],\n      \"venue_id\": \"<string>\",\n      \"uniform_id\": \"<string>\",\n      \"client_id\": \"<string>\",\n      \"division\": \"<string>\",\n      \"booking_status\": \"<string>\",\n      \"archived_at\": \"<dateTime>\",\n      \"display_id\": \"<string>\",\n      \"admin_notes\": \"<string>\",\n      \"worker_instructions\": \"<string>\",\n      \"supervisor_notes\": \"<string>\",\n      \"salesperson\": \"<string>\",\n      \"budget_cents\": \"<integer>\",\n      \"invoice_cents\": \"<integer>\",\n      \"number_of_guests\": \"<integer>\",\n      \"venue_name\": \"<string>\",\n      \"address1\": \"<string>\",\n      \"address2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "5a5cfe74-603b-49bf-92d1-569c7f0e05c0",
+              "name": "Accepted and queued. Nowsta returns 202 because it cannot always guarantee that an update will be honoured on receipt — in particular it will not remove shifts or shift slots that would unassign staff without coordinator confirmation, and colliding venue/client/uniform/position names are altered to preserve uniqueness. The body carries the id of the queued job.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "events",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"My Example Event\",\n      \"starts_at\": \"2015-11-04T09:20:22Z\",\n      \"ends_at\": \"2015-11-05T09:20:22Z\",\n      \"worker_instructions\": \"Show up on time wearing nice clothing.\",\n      \"time_zone\": \"America/Los_Angeles\",\n      \"admin_notes\": \"Run payroll carefully for this event.\",\n      \"supervisor_notes\": \"Be sure to gather time and attendance data\",\n      \"budget_cents\": 45000,\n      \"venue_id\": \"122B\",\n      \"uniform_id\": \"165X\",\n      \"client_id\": \"87RU\",\n      \"invoice_cents\": 65000,\n      \"salesperson\": \"John Smith\",\n      \"archived_at\": null,\n      \"display_id\": \"E12345\",\n      \"shifts\": [\n        {\n          \"id\": \"15Q\",\n          \"starts_at\": \"2015-11-04T09:20:22Z\",\n          \"ends_at\": \"2015-11-05T09:20:22Z\",\n          \"quantity\": 8,\n          \"position_id\": \"189F\",\n          \"instructions\": \"Bring your own bartending utensils.\"\n        }\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 123\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "df73fea1-ec17-4657-949f-e124648a835d",
+              "name": "The request auth token is missing or invalid (error code 1000).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "events",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"My Example Event\",\n      \"starts_at\": \"2015-11-04T09:20:22Z\",\n      \"ends_at\": \"2015-11-05T09:20:22Z\",\n      \"worker_instructions\": \"Show up on time wearing nice clothing.\",\n      \"time_zone\": \"America/Los_Angeles\",\n      \"admin_notes\": \"Run payroll carefully for this event.\",\n      \"supervisor_notes\": \"Be sure to gather time and attendance data\",\n      \"budget_cents\": 45000,\n      \"venue_id\": \"122B\",\n      \"uniform_id\": \"165X\",\n      \"client_id\": \"87RU\",\n      \"invoice_cents\": 65000,\n      \"salesperson\": \"John Smith\",\n      \"archived_at\": null,\n      \"display_id\": \"E12345\",\n      \"shifts\": [\n        {\n          \"id\": \"15Q\",\n          \"starts_at\": \"2015-11-04T09:20:22Z\",\n          \"ends_at\": \"2015-11-05T09:20:22Z\",\n          \"quantity\": 8,\n          \"position_id\": \"189F\",\n          \"instructions\": \"Bring your own bartending utensils.\"\n        }\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1000,\n      \"message\": \"Nil JSON web token\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5aa6b59b-ace3-4f2e-95c2-940adcf93a04",
+              "name": "The provided auth token does not authorize this action — either the company has not been marked active for the integration (code 1101) or the request references objects belonging to another company (code 1100).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "events",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"My Example Event\",\n      \"starts_at\": \"2015-11-04T09:20:22Z\",\n      \"ends_at\": \"2015-11-05T09:20:22Z\",\n      \"worker_instructions\": \"Show up on time wearing nice clothing.\",\n      \"time_zone\": \"America/Los_Angeles\",\n      \"admin_notes\": \"Run payroll carefully for this event.\",\n      \"supervisor_notes\": \"Be sure to gather time and attendance data\",\n      \"budget_cents\": 45000,\n      \"venue_id\": \"122B\",\n      \"uniform_id\": \"165X\",\n      \"client_id\": \"87RU\",\n      \"invoice_cents\": 65000,\n      \"salesperson\": \"John Smith\",\n      \"archived_at\": null,\n      \"display_id\": \"E12345\",\n      \"shifts\": [\n        {\n          \"id\": \"15Q\",\n          \"starts_at\": \"2015-11-04T09:20:22Z\",\n          \"ends_at\": \"2015-11-05T09:20:22Z\",\n          \"quantity\": 8,\n          \"position_id\": \"189F\",\n          \"instructions\": \"Bring your own bartending utensils.\"\n        }\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1101,\n      \"message\": \"Access to integration forbidden\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "fd17b9d8-5280-4d2d-be14-f705a3f2f429",
+              "name": "Some input parameters are invalid or absent, or the batch exceeded the 32-item limit. The body mirrors the request structure - each invalid parameter is mapped to an array of error objects, keyed by the index of the offending entity in the original request (and nested under `shifts` for shift-level problems on the events endpoint).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "events",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"My Example Event\",\n      \"starts_at\": \"2015-11-04T09:20:22Z\",\n      \"ends_at\": \"2015-11-05T09:20:22Z\",\n      \"worker_instructions\": \"Show up on time wearing nice clothing.\",\n      \"time_zone\": \"America/Los_Angeles\",\n      \"admin_notes\": \"Run payroll carefully for this event.\",\n      \"supervisor_notes\": \"Be sure to gather time and attendance data\",\n      \"budget_cents\": 45000,\n      \"venue_id\": \"122B\",\n      \"uniform_id\": \"165X\",\n      \"client_id\": \"87RU\",\n      \"invoice_cents\": 65000,\n      \"salesperson\": \"John Smith\",\n      \"archived_at\": null,\n      \"display_id\": \"E12345\",\n      \"shifts\": [\n        {\n          \"id\": \"15Q\",\n          \"starts_at\": \"2015-11-04T09:20:22Z\",\n          \"ends_at\": \"2015-11-05T09:20:22Z\",\n          \"quantity\": 8,\n          \"position_id\": \"189F\",\n          \"instructions\": \"Bring your own bartending utensils.\"\n        }\n      ]\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"publications\": {\n    \"0\": {\n      \"starts_at\": [\n        {\n          \"code\": 1400,\n          \"message\": \"Starts at is after ends at\"\n        }\n      ],\n      \"shifts\": {\n        \"1\": {\n          \"position_id\": [\n            {\n              \"code\": 1300,\n              \"message\": \"Specified relation not found\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "f933b252-6fee-41c4-8268-ee8d566329b7",
+      "name": "Venues",
+      "description": {
+        "content": "Bulk publication of venues referenced by events.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "becfc3a0-a112-4c35-b99d-6c76f3c6ee9f",
+          "name": "Publish venues",
+          "request": {
+            "name": "Publish venues",
+            "description": {
+              "content": "Bulk create or update venues on Nowsta, matched on the caller's own `id`. Venue names carry a uniqueness constraint in Nowsta, so a submitted name that collides with an existing one will be altered by Nowsta to preserve uniqueness — which is one reason the response is 202 rather than 200. Omitted fields are reset to `null`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "integrations",
+                "v1",
+                "venues",
+                "publications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"address1\": \"<string>\",\n      \"address2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\",\n      \"notes\": \"<string>\",\n      \"contact_phone_number\": \"<string>\",\n      \"contact_email\": \"<string>\",\n      \"contact_full_name\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"address1\": \"<string>\",\n      \"address2\": \"<string>\",\n      \"city\": \"<string>\",\n      \"state\": \"<string>\",\n      \"zip\": \"<string>\",\n      \"notes\": \"<string>\",\n      \"contact_phone_number\": \"<string>\",\n      \"contact_email\": \"<string>\",\n      \"contact_full_name\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "c7b7af36-124f-4b90-98fa-5258f73a8228",
+              "name": "Accepted and queued. Nowsta returns 202 because it cannot always guarantee that an update will be honoured on receipt — in particular it will not remove shifts or shift slots that would unassign staff without coordinator confirmation, and colliding venue/client/uniform/position names are altered to preserve uniqueness. The body carries the id of the queued job.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "venues",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Jerry's Apartment\",\n      \"address1\": \"129 West 81 Street\",\n      \"address2\": \"5A\",\n      \"city\": \"New York\",\n      \"state\": \"NY\",\n      \"zip\": \"10024\",\n      \"contact_phone_number\": \"2015556893\",\n      \"contact_email\": \"JS@Kramerica.biz\",\n      \"contact_full_name\": \"Jerome Allen Seinfeld\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 123\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "aa6293e8-d4ee-4536-8898-2bafd2095fd4",
+              "name": "The request auth token is missing or invalid (error code 1000).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "venues",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Jerry's Apartment\",\n      \"address1\": \"129 West 81 Street\",\n      \"address2\": \"5A\",\n      \"city\": \"New York\",\n      \"state\": \"NY\",\n      \"zip\": \"10024\",\n      \"contact_phone_number\": \"2015556893\",\n      \"contact_email\": \"JS@Kramerica.biz\",\n      \"contact_full_name\": \"Jerome Allen Seinfeld\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1000,\n      \"message\": \"Nil JSON web token\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "9493afd0-a5d4-49eb-baf5-ba779b767dc9",
+              "name": "The provided auth token does not authorize this action — either the company has not been marked active for the integration (code 1101) or the request references objects belonging to another company (code 1100).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "venues",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Jerry's Apartment\",\n      \"address1\": \"129 West 81 Street\",\n      \"address2\": \"5A\",\n      \"city\": \"New York\",\n      \"state\": \"NY\",\n      \"zip\": \"10024\",\n      \"contact_phone_number\": \"2015556893\",\n      \"contact_email\": \"JS@Kramerica.biz\",\n      \"contact_full_name\": \"Jerome Allen Seinfeld\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1101,\n      \"message\": \"Access to integration forbidden\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "bd086c97-9f87-4250-80a6-c09438446aee",
+              "name": "Some input parameters are invalid or absent, or the batch exceeded the 32-item limit. The body mirrors the request structure - each invalid parameter is mapped to an array of error objects, keyed by the index of the offending entity in the original request (and nested under `shifts` for shift-level problems on the events endpoint).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "venues",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Jerry's Apartment\",\n      \"address1\": \"129 West 81 Street\",\n      \"address2\": \"5A\",\n      \"city\": \"New York\",\n      \"state\": \"NY\",\n      \"zip\": \"10024\",\n      \"contact_phone_number\": \"2015556893\",\n      \"contact_email\": \"JS@Kramerica.biz\",\n      \"contact_full_name\": \"Jerome Allen Seinfeld\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"publications\": {\n    \"0\": {\n      \"starts_at\": [\n        {\n          \"code\": 1400,\n          \"message\": \"Starts at is after ends at\"\n        }\n      ],\n      \"shifts\": {\n        \"1\": {\n          \"position_id\": [\n            {\n              \"code\": 1300,\n              \"message\": \"Specified relation not found\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "b32919bf-b8a0-4696-bda9-f655d0232ab1",
+      "name": "Clients",
+      "description": {
+        "content": "Bulk publication of clients referenced by events.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "0ee5ed7d-3828-41c5-8251-844e532b46bc",
+          "name": "Publish clients",
+          "request": {
+            "name": "Publish clients",
+            "description": {
+              "content": "Bulk create or update clients on Nowsta, matched on the caller's own `id`. Client names carry a uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest. Omitted fields are reset to `null`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "integrations",
+                "v1",
+                "clients",
+                "publications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"admin_notes\": \"<string>\",\n      \"supervisor_notes\": \"<string>\",\n      \"company_user_notes\": \"<string>\",\n      \"contact_phone_number\": \"<string>\",\n      \"contact_email\": \"<string>\",\n      \"contact_full_name\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"admin_notes\": \"<string>\",\n      \"supervisor_notes\": \"<string>\",\n      \"company_user_notes\": \"<string>\",\n      \"contact_phone_number\": \"<string>\",\n      \"contact_email\": \"<string>\",\n      \"contact_full_name\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "804943de-2ca2-4ae5-800e-f88dbcb2a603",
+              "name": "Accepted and queued. Nowsta returns 202 because it cannot always guarantee that an update will be honoured on receipt — in particular it will not remove shifts or shift slots that would unassign staff without coordinator confirmation, and colliding venue/client/uniform/position names are altered to preserve uniqueness. The body carries the id of the queued job.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "clients",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Vandelay Industries\",\n      \"admin_notes\": \"Great architecture firm\",\n      \"supervisor_notes\": \"Ask about the LaTex and LaTeX-related products.\",\n      \"company_user_notes\": \"Notes workers see\",\n      \"contact_phone_number\": \"2015556893\",\n      \"contact_email\": \"GC@Vandel.ly\",\n      \"contact_full_name\": \"Arthur Vandelay\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 123\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "3eb30b59-e7fe-4732-bd25-682d07de7b8f",
+              "name": "The request auth token is missing or invalid (error code 1000).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "clients",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Vandelay Industries\",\n      \"admin_notes\": \"Great architecture firm\",\n      \"supervisor_notes\": \"Ask about the LaTex and LaTeX-related products.\",\n      \"company_user_notes\": \"Notes workers see\",\n      \"contact_phone_number\": \"2015556893\",\n      \"contact_email\": \"GC@Vandel.ly\",\n      \"contact_full_name\": \"Arthur Vandelay\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1000,\n      \"message\": \"Nil JSON web token\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0c1b1bfc-5cb7-4cd8-b45e-11470f7f55a4",
+              "name": "The provided auth token does not authorize this action — either the company has not been marked active for the integration (code 1101) or the request references objects belonging to another company (code 1100).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "clients",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Vandelay Industries\",\n      \"admin_notes\": \"Great architecture firm\",\n      \"supervisor_notes\": \"Ask about the LaTex and LaTeX-related products.\",\n      \"company_user_notes\": \"Notes workers see\",\n      \"contact_phone_number\": \"2015556893\",\n      \"contact_email\": \"GC@Vandel.ly\",\n      \"contact_full_name\": \"Arthur Vandelay\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1101,\n      \"message\": \"Access to integration forbidden\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "49becba8-1adf-4978-b098-76dabb473ca6",
+              "name": "Some input parameters are invalid or absent, or the batch exceeded the 32-item limit. The body mirrors the request structure - each invalid parameter is mapped to an array of error objects, keyed by the index of the offending entity in the original request (and nested under `shifts` for shift-level problems on the events endpoint).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "clients",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Vandelay Industries\",\n      \"admin_notes\": \"Great architecture firm\",\n      \"supervisor_notes\": \"Ask about the LaTex and LaTeX-related products.\",\n      \"company_user_notes\": \"Notes workers see\",\n      \"contact_phone_number\": \"2015556893\",\n      \"contact_email\": \"GC@Vandel.ly\",\n      \"contact_full_name\": \"Arthur Vandelay\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"publications\": {\n    \"0\": {\n      \"starts_at\": [\n        {\n          \"code\": 1400,\n          \"message\": \"Starts at is after ends at\"\n        }\n      ],\n      \"shifts\": {\n        \"1\": {\n          \"position_id\": [\n            {\n              \"code\": 1300,\n              \"message\": \"Specified relation not found\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "0841ffa1-6975-4ae1-9691-6ff3295c0cf4",
+      "name": "Uniforms",
+      "description": {
+        "content": "Bulk publication of uniforms referenced by events.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "b5e74af1-56d6-4619-8780-a979d076373b",
+          "name": "Publish uniforms",
+          "request": {
+            "name": "Publish uniforms",
+            "description": {
+              "content": "Bulk create or update uniforms on Nowsta, matched on the caller's own `id`. Uniform names carry a uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest. Omitted fields are reset to `null`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "integrations",
+                "v1",
+                "uniforms",
+                "publications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"description\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "5cb83277-7464-4ec8-8e97-79f72f7c06ef",
+              "name": "Accepted and queued. Nowsta returns 202 because it cannot always guarantee that an update will be honoured on receipt — in particular it will not remove shifts or shift slots that would unassign staff without coordinator confirmation, and colliding venue/client/uniform/position names are altered to preserve uniqueness. The body carries the id of the queued job.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "uniforms",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"The puffy shirt\",\n      \"description\": \"Wear if you wanna be a pirate.\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 123\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "a454ef2e-9aee-4d22-ad91-5c524e05c428",
+              "name": "The request auth token is missing or invalid (error code 1000).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "uniforms",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"The puffy shirt\",\n      \"description\": \"Wear if you wanna be a pirate.\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1000,\n      \"message\": \"Nil JSON web token\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1e0b86ce-5a18-4834-a386-3fd02e6abd0d",
+              "name": "The provided auth token does not authorize this action — either the company has not been marked active for the integration (code 1101) or the request references objects belonging to another company (code 1100).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "uniforms",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"The puffy shirt\",\n      \"description\": \"Wear if you wanna be a pirate.\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1101,\n      \"message\": \"Access to integration forbidden\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "7153392b-73ca-4fa2-92c6-a39741b4c568",
+              "name": "Some input parameters are invalid or absent, or the batch exceeded the 32-item limit. The body mirrors the request structure - each invalid parameter is mapped to an array of error objects, keyed by the index of the offending entity in the original request (and nested under `shifts` for shift-level problems on the events endpoint).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "uniforms",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"The puffy shirt\",\n      \"description\": \"Wear if you wanna be a pirate.\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"publications\": {\n    \"0\": {\n      \"starts_at\": [\n        {\n          \"code\": 1400,\n          \"message\": \"Starts at is after ends at\"\n        }\n      ],\n      \"shifts\": {\n        \"1\": {\n          \"position_id\": [\n            {\n              \"code\": 1300,\n              \"message\": \"Specified relation not found\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "becd3f97-8fbf-45a7-937c-659b4a982d56",
+      "name": "Positions",
+      "description": {
+        "content": "Bulk publication of positions referenced by shifts.",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "5768371d-7327-4b98-86c5-6330cdf4c52e",
+          "name": "Publish positions",
+          "request": {
+            "name": "Publish positions",
+            "description": {
+              "content": "Bulk create or update positions on Nowsta, matched on the caller's own `id`. Position names carry a uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest. Positions are referenced by shifts via `position_id`. Omitted fields are reset to `null`.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "integrations",
+                "v1",
+                "positions",
+                "publications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"supervisor\": \"<boolean>\",\n      \"default_rate_cents\": \"<integer>\",\n      \"client_bill_rate_cents\": \"<integer>\",\n      \"instructions\": \"<string>\",\n      \"description\": \"<string>\",\n      \"pay_code\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"name\": \"<string>\",\n      \"supervisor\": \"<boolean>\",\n      \"default_rate_cents\": \"<integer>\",\n      \"client_bill_rate_cents\": \"<integer>\",\n      \"instructions\": \"<string>\",\n      \"description\": \"<string>\",\n      \"pay_code\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "ff790831-332e-41af-ad4a-67a317da7a91",
+              "name": "Accepted and queued. Nowsta returns 202 because it cannot always guarantee that an update will be honoured on receipt — in particular it will not remove shifts or shift slots that would unassign staff without coordinator confirmation, and colliding venue/client/uniform/position names are altered to preserve uniqueness. The body carries the id of the queued job.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "positions",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Comedian\",\n      \"default_rate_cents\": 3500,\n      \"instructions\": \"Make lots of jokes.\",\n      \"description\": \"The most important position.\",\n      \"supervisor\": false,\n      \"pay_code\": \"456-123\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 123\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "1fb0008e-580c-4447-91f4-a9f53e1a267e",
+              "name": "The request auth token is missing or invalid (error code 1000).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "positions",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Comedian\",\n      \"default_rate_cents\": 3500,\n      \"instructions\": \"Make lots of jokes.\",\n      \"description\": \"The most important position.\",\n      \"supervisor\": false,\n      \"pay_code\": \"456-123\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1000,\n      \"message\": \"Nil JSON web token\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "5b349f75-ffb4-46ce-9834-6f2377e6b6a9",
+              "name": "The provided auth token does not authorize this action — either the company has not been marked active for the integration (code 1101) or the request references objects belonging to another company (code 1100).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "positions",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Comedian\",\n      \"default_rate_cents\": 3500,\n      \"instructions\": \"Make lots of jokes.\",\n      \"description\": \"The most important position.\",\n      \"supervisor\": false,\n      \"pay_code\": \"456-123\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1101,\n      \"message\": \"Access to integration forbidden\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "2802247a-7bf3-4234-8ba3-1efd8e436956",
+              "name": "Some input parameters are invalid or absent, or the batch exceeded the 32-item limit. The body mirrors the request structure - each invalid parameter is mapped to an array of error objects, keyed by the index of the offending entity in the original request (and nested under `shifts` for shift-level problems on the events endpoint).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "positions",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"125A\",\n      \"name\": \"Comedian\",\n      \"default_rate_cents\": 3500,\n      \"instructions\": \"Make lots of jokes.\",\n      \"description\": \"The most important position.\",\n      \"supervisor\": false,\n      \"pay_code\": \"456-123\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"publications\": {\n    \"0\": {\n      \"starts_at\": [\n        {\n          \"code\": 1400,\n          \"message\": \"Starts at is after ends at\"\n        }\n      ],\n      \"shifts\": {\n        \"1\": {\n          \"position_id\": [\n            {\n              \"code\": 1300,\n              \"message\": \"Specified relation not found\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    },
+    {
+      "id": "92d2b177-368f-48de-b708-737e425a92b1",
+      "name": "Workers",
+      "description": {
+        "content": "Bulk publication of company users (workers).",
+        "type": "text/plain"
+      },
+      "item": [
+        {
+          "id": "7de850f4-f45b-4ba3-93a6-37839a3ee05d",
+          "name": "Publish workers",
+          "request": {
+            "name": "Publish workers",
+            "description": {
+              "content": "Bulk create or update workers (company users) on Nowsta, matched on the caller's own `id`. Worker records are partly shared across every company a person works for, so update rules are restricted. Freely updatable via this endpoint - `start_date`, `notes`, `rank`, `pronouns`, `tablet_access_code`, `payroll_id`, and `email`/`phone_number` (the latter two only when the worker has not yet set up an account, by resending the same `id` with a different value). Updating `first_name`, `last_name`, `address1`, `address2`, `state`, `city`, `zip`, `birthday`, `emergency_contact_name`, `emergency_contact_phone_number`, `pronouns` or `nickname` desynchronizes the worker record between your company and the shared cross-company record; Nowsta then offers a re-sync, after which those fields can no longer be updated through this endpoint.",
+              "type": "text/plain"
+            },
+            "url": {
+              "path": [
+                "integrations",
+                "v1",
+                "workers",
+                "publications"
+              ],
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "query": [],
+              "variable": []
+            },
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              }
+            ],
+            "method": "POST",
+            "auth": null,
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"<string>\",\n      \"first_name\": \"<string>\",\n      \"last_name\": \"<string>\",\n      \"email\": \"<string>\",\n      \"start_date\": \"<date>\",\n      \"birthday\": \"<date>\",\n      \"notes\": \"<string>\",\n      \"zip\": \"<string>\",\n      \"nickname\": \"<string>\",\n      \"emergency_contact_phone_number\": \"<string>\",\n      \"city\": \"<string>\",\n      \"rank\": \"<integer>\",\n      \"pronouns\": \"<string>\",\n      \"tablet_access_code\": \"<string>\",\n      \"state\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"payroll_id\": \"<string>\",\n      \"emergency_contact_name\": \"<string>\",\n      \"address1\": \"<string>\",\n      \"address2\": \"<string>\"\n    },\n    {\n      \"id\": \"<string>\",\n      \"first_name\": \"<string>\",\n      \"last_name\": \"<string>\",\n      \"email\": \"<string>\",\n      \"start_date\": \"<date>\",\n      \"birthday\": \"<date>\",\n      \"notes\": \"<string>\",\n      \"zip\": \"<string>\",\n      \"nickname\": \"<string>\",\n      \"emergency_contact_phone_number\": \"<string>\",\n      \"city\": \"<string>\",\n      \"rank\": \"<integer>\",\n      \"pronouns\": \"<string>\",\n      \"tablet_access_code\": \"<string>\",\n      \"state\": \"<string>\",\n      \"phone_number\": \"<string>\",\n      \"payroll_id\": \"<string>\",\n      \"emergency_contact_name\": \"<string>\",\n      \"address1\": \"<string>\",\n      \"address2\": \"<string>\"\n    }\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [
+            {
+              "id": "65af016e-e0e9-46da-b599-79350d0dd00b",
+              "name": "Accepted and queued. Nowsta returns 202 because it cannot always guarantee that an update will be honoured on receipt — in particular it will not remove shifts or shift slots that would unassign staff without coordinator confirmation, and colliding venue/client/uniform/position names are altered to preserve uniqueness. The body carries the id of the queued job.",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "workers",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"1W\",\n      \"first_name\": \"John\",\n      \"last_name\": \"Smith\",\n      \"email\": \"john@nowsta.com\",\n      \"start_date\": \"2022-01-01T12:00:00Z\",\n      \"birthday\": \"2000-01-01\",\n      \"notes\": \"The notes\",\n      \"zip\": \"25554\",\n      \"nickname\": \"a nickname\",\n      \"emergency_contact_phone_number\": \"2125555555\",\n      \"city\": \"City x\",\n      \"rank\": \"1\",\n      \"pronouns\": \"Her\",\n      \"tablet_access_code\": \"123CODE\",\n      \"state\": \"NY\",\n      \"phone_number\": \"2125555559\",\n      \"payroll_id\": \"123-PAY\",\n      \"emergency_contact_name\": \"Johnnys Saver\",\n      \"address1\": \"129 West 81 Street\",\n      \"address2\": \"122 West 84 Street\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Accepted",
+              "code": 202,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"id\": 123\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "925eb0f3-ea21-4f69-ac57-c2f0e3a5e87b",
+              "name": "The request auth token is missing or invalid (error code 1000).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "workers",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"1W\",\n      \"first_name\": \"John\",\n      \"last_name\": \"Smith\",\n      \"email\": \"john@nowsta.com\",\n      \"start_date\": \"2022-01-01T12:00:00Z\",\n      \"birthday\": \"2000-01-01\",\n      \"notes\": \"The notes\",\n      \"zip\": \"25554\",\n      \"nickname\": \"a nickname\",\n      \"emergency_contact_phone_number\": \"2125555555\",\n      \"city\": \"City x\",\n      \"rank\": \"1\",\n      \"pronouns\": \"Her\",\n      \"tablet_access_code\": \"123CODE\",\n      \"state\": \"NY\",\n      \"phone_number\": \"2125555559\",\n      \"payroll_id\": \"123-PAY\",\n      \"emergency_contact_name\": \"Johnnys Saver\",\n      \"address1\": \"129 West 81 Street\",\n      \"address2\": \"122 West 84 Street\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unauthorized",
+              "code": 401,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1000,\n      \"message\": \"Nil JSON web token\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "0fe611e8-d0f3-448d-aab3-b4b4d582a88c",
+              "name": "The provided auth token does not authorize this action — either the company has not been marked active for the integration (code 1101) or the request references objects belonging to another company (code 1100).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "workers",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"1W\",\n      \"first_name\": \"John\",\n      \"last_name\": \"Smith\",\n      \"email\": \"john@nowsta.com\",\n      \"start_date\": \"2022-01-01T12:00:00Z\",\n      \"birthday\": \"2000-01-01\",\n      \"notes\": \"The notes\",\n      \"zip\": \"25554\",\n      \"nickname\": \"a nickname\",\n      \"emergency_contact_phone_number\": \"2125555555\",\n      \"city\": \"City x\",\n      \"rank\": \"1\",\n      \"pronouns\": \"Her\",\n      \"tablet_access_code\": \"123CODE\",\n      \"state\": \"NY\",\n      \"phone_number\": \"2125555559\",\n      \"payroll_id\": \"123-PAY\",\n      \"emergency_contact_name\": \"Johnnys Saver\",\n      \"address1\": \"129 West 81 Street\",\n      \"address2\": \"122 West 84 Street\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Forbidden",
+              "code": 403,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"errors\": [\n    {\n      \"code\": 1101,\n      \"message\": \"Access to integration forbidden\"\n    }\n  ]\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            },
+            {
+              "id": "62ef4e61-31d8-43a7-829a-c3a575a4a84d",
+              "name": "Some input parameters are invalid or absent, or the batch exceeded the 32-item limit. The body mirrors the request structure - each invalid parameter is mapped to an array of error objects, keyed by the index of the offending entity in the original request (and nested under `shifts` for shift-level problems on the events endpoint).",
+              "originalRequest": {
+                "url": {
+                  "path": [
+                    "integrations",
+                    "v1",
+                    "workers",
+                    "publications"
+                  ],
+                  "host": [
+                    "{{baseUrl}}"
+                  ],
+                  "query": [],
+                  "variable": []
+                },
+                "header": [
+                  {
+                    "description": {
+                      "content": "Added as a part of security scheme: bearer",
+                      "type": "text/plain"
+                    },
+                    "key": "Authorization",
+                    "value": "Bearer <token>"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ],
+                "method": "POST",
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"publications\": [\n    {\n      \"id\": \"1W\",\n      \"first_name\": \"John\",\n      \"last_name\": \"Smith\",\n      \"email\": \"john@nowsta.com\",\n      \"start_date\": \"2022-01-01T12:00:00Z\",\n      \"birthday\": \"2000-01-01\",\n      \"notes\": \"The notes\",\n      \"zip\": \"25554\",\n      \"nickname\": \"a nickname\",\n      \"emergency_contact_phone_number\": \"2125555555\",\n      \"city\": \"City x\",\n      \"rank\": \"1\",\n      \"pronouns\": \"Her\",\n      \"tablet_access_code\": \"123CODE\",\n      \"state\": \"NY\",\n      \"phone_number\": \"2125555559\",\n      \"payroll_id\": \"123-PAY\",\n      \"emergency_contact_name\": \"Johnnys Saver\",\n      \"address1\": \"129 West 81 Street\",\n      \"address2\": \"122 West 84 Street\"\n    }\n  ]\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                }
+              },
+              "status": "Unprocessable Entity (WebDAV) (RFC 4918)",
+              "code": 422,
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "body": "{\n  \"publications\": {\n    \"0\": {\n      \"starts_at\": [\n        {\n          \"code\": 1400,\n          \"message\": \"Starts at is after ends at\"\n        }\n      ],\n      \"shifts\": {\n        \"1\": {\n          \"position_id\": [\n            {\n              \"code\": 1300,\n              \"message\": \"Specified relation not found\"\n            }\n          ]\n        }\n      }\n    }\n  }\n}",
+              "cookie": [],
+              "_postman_previewlanguage": "json"
+            }
+          ],
+          "event": [],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          }
+        }
+      ],
+      "event": []
+    }
+  ],
+  "event": [],
+  "variable": [
+    {
+      "type": "string",
+      "value": "https://api.nowsta.com",
+      "key": "baseUrl"
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{bearerToken}}"
+      }
+    ]
+  },
+  "info": {
+    "_postman_id": "d524e5db-2ba7-46c1-ae4d-19ff0bfb0e6b",
+    "name": "Nowsta Integration API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": {
+      "content": "The Nowsta Integration API lets an approved partner platform publish event, shift and position data\ninto Nowsta, along with the supporting system inputs — venues, clients, uniforms and workers — that\nenrich that data.\n\nThe API is deliberately narrow: every resource is exposed through a single bulk \"publications\"\nendpoint that accepts an array of objects and performs create-or-update by the caller's own external\n`id`. There are no read (GET), PATCH or DELETE operations in the public integration surface.\n\nSemantics published by Nowsta and preserved here:\n\n* Every publication is a **POST, not a PATCH** — omitted fields are reset to their default (`null`),\n  so callers must send the complete object on every update.\n* Every successful publication returns **202 Accepted** with the id of the queued job; Nowsta cannot\n  guarantee a request is honoured on receipt (for example it will not remove shifts or shift slots\n  that would unassign already-scheduled staff without coordinator confirmation).\n* Batches are limited to **32 items**; larger batches are rejected with 422 / error code 1203.\n* Publication requests for the same company are **queued and processed serially**, so callers are\n  advised to issue requests in series rather than in parallel.\n* Access is **allow-listed**: Nowsta must approve a company before its token works, otherwise\n  requests return 403 with error code 1101.\n\nDERIVATION NOTE — this document was transcribed by API Evangelist from Nowsta's own published\nIntegration API reference (the Slate-generated site formerly at https://developer.nowsta.com/,\ncaptured at https://web.archive.org/web/20240603053309/https://developer.nowsta.com/). Every path,\nmethod, field name, type, nullability, constraint, status code and error code below appears verbatim\nin that reference. Nowsta does not publish a machine-readable specification; nothing here was\ninvented. The live production API was probed on 2026-08-01 and confirmed to still serve these paths\n(unauthenticated POST returns `401 {\"errors\":[{\"code\":1000,\"message\":\"Nil JSON web token\"}]}`).\n\nContact Support:\n Name: Nowsta",
+      "type": "text/plain"
+    }
+  }
+}
