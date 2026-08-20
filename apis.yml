@@ -20,6 +20,19 @@ specificationVersion: '0.23'
 created: '2026-08-01'
 modified: '2026-08-01'
 tags:
+- Workforce Management
+- staff-scheduling
+- shift-scheduling
+- Time and Attendance
+- Hourly Workforce
+- gig-work
+- event-staffing
+- Hospitality
+- staffing-agency
+- Vendor Management
+- Payroll
+- Human Resources
+tags_raw:
 - workforce-management
 - staff-scheduling
 - shift-scheduling
@@ -46,6 +59,12 @@ apis:
   humanURL: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
   baseURL: https://api.nowsta.com
   tags:
+  - Workforce Management
+  - shift-scheduling
+  - event-staffing
+  - Hourly Workforce
+  - bulk-publication
+  tags_raw:
   - workforce-management
   - shift-scheduling
   - event-staffing
