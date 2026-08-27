@@ -46,38 +46,18 @@ tags_raw:
 - payroll
 - human-resources
 apis:
-- name: Nowsta Integration API
-  description: >-
-    Allow-listed partner API for publishing workforce data into Nowsta. Six bulk "publications"
-    endpoints - events (with nested shifts), venues, clients, uniforms, positions and workers - each
-    accepting up to 32 objects per request and performing create-or-update keyed on the caller's own
-    external id. Authentication is a per-company bearer token that the customer retrieves from the
-    Nowsta UI; Nowsta must approve a company before its token is active. Every successful publication
-    returns 202 Accepted with a queued-job id, because Nowsta will not apply changes that would
-    unassign already-scheduled staff without coordinator confirmation. There are no read, PATCH or
-    DELETE operations in the public surface, and no documented webhook or event stream.
+- aid: nowsta:nowsta-clients-api
+  name: Nowsta Clients API
+  description: Bulk publication of clients referenced by events.
   humanURL: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
   baseURL: https://api.nowsta.com
   tags:
-  - Workforce Management
-  - shift-scheduling
-  - event-staffing
-  - Hourly Workforce
-  - bulk-publication
-  tags_raw:
-  - workforce-management
-  - shift-scheduling
-  - event-staffing
-  - hourly-workforce
-  - bulk-publication
+  - Clients
   properties:
   - type: OpenAPI
-    url: openapi/nowsta-integration-openapi.yml
+    url: openapi/nowsta-clients-api-openapi.yml
   - type: APIReference
-    name: Nowsta Integration API reference (archived - developer.nowsta.com no longer resolves)
     url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
-  - type: Overlay
-    url: overlays/nowsta-integration-overlay.yaml
   - type: ErrorCatalog
     url: errors/nowsta-problem-types.yml
   - type: Conventions
@@ -91,7 +71,146 @@ apis:
   - type: Sandbox
     url: sandbox/nowsta-sandbox.yml
   - type: RateLimits
-    name: Batch limit - 32 items per publication request
+    url: conventions/nowsta-conventions.yml
+  - type: IntegrationAddendum
+    url: https://www.nowsta.com/integration-addendum/
+- aid: nowsta:nowsta-events-api
+  name: Nowsta Events API
+  description: Bulk publication of events and their nested shifts.
+  humanURL: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  baseURL: https://api.nowsta.com
+  tags:
+  - Events
+  properties:
+  - type: OpenAPI
+    url: openapi/nowsta-events-api-openapi.yml
+  - type: APIReference
+    url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  - type: ErrorCatalog
+    url: errors/nowsta-problem-types.yml
+  - type: Conventions
+    url: conventions/nowsta-conventions.yml
+  - type: Idempotency
+    url: conventions/nowsta-conventions.yml
+  - type: DataModel
+    url: data-model/nowsta-data-model.yml
+  - type: Authentication
+    url: authentication/nowsta-authentication.yml
+  - type: Sandbox
+    url: sandbox/nowsta-sandbox.yml
+  - type: RateLimits
+    url: conventions/nowsta-conventions.yml
+  - type: IntegrationAddendum
+    url: https://www.nowsta.com/integration-addendum/
+- aid: nowsta:nowsta-positions-api
+  name: Nowsta Positions API
+  description: Bulk publication of positions referenced by shifts.
+  humanURL: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  baseURL: https://api.nowsta.com
+  tags:
+  - Positions
+  properties:
+  - type: OpenAPI
+    url: openapi/nowsta-positions-api-openapi.yml
+  - type: APIReference
+    url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  - type: ErrorCatalog
+    url: errors/nowsta-problem-types.yml
+  - type: Conventions
+    url: conventions/nowsta-conventions.yml
+  - type: Idempotency
+    url: conventions/nowsta-conventions.yml
+  - type: DataModel
+    url: data-model/nowsta-data-model.yml
+  - type: Authentication
+    url: authentication/nowsta-authentication.yml
+  - type: Sandbox
+    url: sandbox/nowsta-sandbox.yml
+  - type: RateLimits
+    url: conventions/nowsta-conventions.yml
+  - type: IntegrationAddendum
+    url: https://www.nowsta.com/integration-addendum/
+- aid: nowsta:nowsta-uniforms-api
+  name: Nowsta Uniforms API
+  description: Bulk publication of uniforms referenced by events.
+  humanURL: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  baseURL: https://api.nowsta.com
+  tags:
+  - Uniforms
+  properties:
+  - type: OpenAPI
+    url: openapi/nowsta-uniforms-api-openapi.yml
+  - type: APIReference
+    url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  - type: ErrorCatalog
+    url: errors/nowsta-problem-types.yml
+  - type: Conventions
+    url: conventions/nowsta-conventions.yml
+  - type: Idempotency
+    url: conventions/nowsta-conventions.yml
+  - type: DataModel
+    url: data-model/nowsta-data-model.yml
+  - type: Authentication
+    url: authentication/nowsta-authentication.yml
+  - type: Sandbox
+    url: sandbox/nowsta-sandbox.yml
+  - type: RateLimits
+    url: conventions/nowsta-conventions.yml
+  - type: IntegrationAddendum
+    url: https://www.nowsta.com/integration-addendum/
+- aid: nowsta:nowsta-venues-api
+  name: Nowsta Venues API
+  description: Bulk publication of venues referenced by events.
+  humanURL: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  baseURL: https://api.nowsta.com
+  tags:
+  - Venues
+  properties:
+  - type: OpenAPI
+    url: openapi/nowsta-venues-api-openapi.yml
+  - type: APIReference
+    url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  - type: ErrorCatalog
+    url: errors/nowsta-problem-types.yml
+  - type: Conventions
+    url: conventions/nowsta-conventions.yml
+  - type: Idempotency
+    url: conventions/nowsta-conventions.yml
+  - type: DataModel
+    url: data-model/nowsta-data-model.yml
+  - type: Authentication
+    url: authentication/nowsta-authentication.yml
+  - type: Sandbox
+    url: sandbox/nowsta-sandbox.yml
+  - type: RateLimits
+    url: conventions/nowsta-conventions.yml
+  - type: IntegrationAddendum
+    url: https://www.nowsta.com/integration-addendum/
+- aid: nowsta:nowsta-workers-api
+  name: Nowsta Workers API
+  description: Bulk publication of company users (workers).
+  humanURL: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  baseURL: https://api.nowsta.com
+  tags:
+  - Workers
+  properties:
+  - type: OpenAPI
+    url: openapi/nowsta-workers-api-openapi.yml
+  - type: APIReference
+    url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+  - type: ErrorCatalog
+    url: errors/nowsta-problem-types.yml
+  - type: Conventions
+    url: conventions/nowsta-conventions.yml
+  - type: Idempotency
+    url: conventions/nowsta-conventions.yml
+  - type: DataModel
+    url: data-model/nowsta-data-model.yml
+  - type: Authentication
+    url: authentication/nowsta-authentication.yml
+  - type: Sandbox
+    url: sandbox/nowsta-sandbox.yml
+  - type: RateLimits
     url: conventions/nowsta-conventions.yml
   - type: IntegrationAddendum
     url: https://www.nowsta.com/integration-addendum/
@@ -101,6 +220,8 @@ maintainers:
 - FN: APIs.json
   email: info@apis.io
 common:
+- type: Overlay
+  url: overlays/nowsta-integration-overlay.yaml
 - type: AgenticAccess
   url: agentic-access/nowsta-agentic-access.yml
 - type: Website
