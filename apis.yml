@@ -12,6 +12,18 @@ description: >-
   app.nowsta.com. For partners, Nowsta publishes an allow-listed Integration API that lets an upstream
   system (event management, CRM, catering or venue software) publish events, shifts, positions, venues,
   clients, uniforms and workers into Nowsta in bulk.
+deliveryModel:
+  model: saas
+  open_source: false
+  commercial: true
+  callable_host: true
+  label: Hosted service · you call their endpoint
+  confidence: high
+  source:
+  - openapi
+  - pricing
+  generated: '2026-08-28'
+  method: derived
 image: https://www.nowsta.com/wp-content/uploads/2025/02/cropped-nowsta-favicon-v2-270x270.png
 url: https://raw.githubusercontent.com/api-evangelist/nowsta/refs/heads/main/apis.yml
 x-type: company
