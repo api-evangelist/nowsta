@@ -32,18 +32,18 @@ specificationVersion: '0.23'
 created: '2026-08-01'
 modified: '2026-08-01'
 tags:
-- Workforce Management
+- workforce-management
 - staff-scheduling
 - shift-scheduling
-- Time and Attendance
-- Hourly Workforce
+- time-and-attendance
+- hourly-workforce
 - gig-work
 - event-staffing
-- Hospitality
+- hospitality
 - staffing-agency
-- Vendor Management
-- Payroll
-- Human Resources
+- vendor-management
+- payroll
+- human-resources
 tags_raw:
 - workforce-management
 - staff-scheduling
@@ -92,6 +92,8 @@ apis:
   humanURL: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
   baseURL: https://api.nowsta.com
   tags:
+  - Event
+  tags_raw:
   - Events
   properties:
   - type: OpenAPI
