@@ -1,0 +1,172 @@
+openapi: 3.2.0
+info:
+  title: Nowsta Integration Uniforms API
+  version: 1.0.0
+  description: "The Nowsta Integration API lets an approved partner platform publish event, shift and position data\ninto Nowsta, along with the supporting system inputs — venues, clients, uniforms and workers — that\nenrich that data.\n\nThe API is deliberately narrow: every resource is exposed through a single bulk \"publications\"\nendpoint that accepts an array of objects and performs create-or-update by the caller's own external\n`id`. There are no read (GET), PATCH or DELETE operations in the public integration surface.\n\nSemantics published by Nowsta and preserved here:\n\n* Every publication is a **POST, not a PATCH** — omitted fields are reset to their default (`null`),\n  so callers must send the complete object on every update.\n* Every successful publication returns **202 Accepted** with the id of the queued job; Nowsta cannot\n  guarantee a request is honoured on receipt (for example it will not remove shifts or shift slots\n  that would unassign already-scheduled staff without coordinator confirmation).\n* Batches are limited to **32 items**; larger batches are rejected with 422 / error code 1203.\n* Publication requests for the same company are **queued and processed serially**, so callers are\n  advised to issue requests in series rather than in parallel.\n* Access is **allow-listed**: Nowsta must approve a company before its token works, otherwise\n  requests return 403 with error code 1101.\n\nDERIVATION NOTE — this document was transcribed by API Evangelist from Nowsta's own published\nIntegration API reference (the Slate-generated site formerly at https://developer.nowsta.com/,\ncaptured at https://web.archive.org/web/20240603053309/https://developer.nowsta.com/). Every path,\nmethod, field name, type, nullability, constraint, status code and error code below appears verbatim\nin that reference. Nowsta does not publish a machine-readable specification; nothing here was\ninvented. The live production API was probed on 2026-08-01 and confirmed to still serve these paths\n(unauthenticated POST returns `401 {\"errors\":[{\"code\":1000,\"message\":\"Nil JSON web token\"}]}`)."
+  contact:
+    name: Nowsta
+    url: https://www.nowsta.com/
+  x-evidence:
+    generated: '2026-08-01'
+    method: generated
+    source: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
+    original_docs_host: https://developer.nowsta.com/
+    original_docs_status: DNS NXDOMAIN as of 2026-08-01 (developer docs host decommissioned)
+    live_probe:
+      url: https://api.nowsta.com/integrations/v1/events/publications
+      method: POST
+      http_status: 401
+      body: '{"errors":[{"code":1000,"message":"Nil JSON web token"}]}'
+      fetched: '2026-08-01'
+servers:
+- url: https://api.nowsta.com
+  description: Production
+- url: https://api.nowsta-staging.com
+  description: Staging / demo (access granted by Nowsta on request)
+security:
+- bearerAuth: []
+tags:
+- name: Uniforms
+  description: Bulk publication of uniforms referenced by events.
+paths:
+  /integrations/v1/uniforms/publications:
+    post:
+      tags:
+      - Uniforms
+      operationId: publishUniforms
+      summary: Publish uniforms
+      description: Bulk create or update uniforms on Nowsta, matched on the caller's own `id`. Uniform names carry a uniqueness constraint in Nowsta, so a colliding name will be altered by Nowsta on ingest. Omitted fields are reset to `null`.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - publications
+              properties:
+                publications:
+                  type: array
+                  maxItems: 32
+                  items:
+                    $ref: '#/components/schemas/UniformPublication'
+            example:
+              publications:
+              - id: 125A
+                name: The puffy shirt
+                description: Wear if you wanna be a pirate.
+      responses:
+        '202':
+          $ref: '#/components/responses/Accepted'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+components:
+  schemas:
+    ErrorObject:
+      type: object
+      description: The ERROR_OBJ used throughout every error response - a numeric `code` plus a human-readable `message`.
+      properties:
+        code:
+          type: integer
+          description: Nowsta error code. See errors/nowsta-problem-types.yml for the published registry.
+          example: 1201
+        message:
+          type: string
+          example: Parameter cannot be null
+    ErrorsResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
+    UniformPublication:
+      type: object
+      description: UNIFORM_PUBLICATION.
+      required:
+      - id
+      - name
+      properties:
+        id:
+          type: string
+          maxLength: 255
+        name:
+          type: string
+          maxLength: 255
+        description:
+          type:
+          - string
+          - 'null'
+    PublicationAccepted:
+      type: object
+      description: The id of the publication request, indicating receipt and insertion into Nowsta's job queue.
+      properties:
+        id:
+          type: integer
+          example: 123
+    UnprocessableEntityBody:
+      type: object
+      description: Validation failures keyed by the index of the entity in the submitted `publications` array. Each field maps to an array of ERROR_OBJ. Nowsta publishes the shape but not a strict schema, so this is modelled as a free-form object rather than invented.
+      properties:
+        publications:
+          type: object
+          additionalProperties: true
+      additionalProperties: true
+  responses:
+    UnprocessableEntity:
+      description: Some input parameters are invalid or absent, or the batch exceeded the 32-item limit. The body mirrors the request structure - each invalid parameter is mapped to an array of error objects, keyed by the index of the offending entity in the original request (and nested under `shifts` for shift-level problems on the events endpoint).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/UnprocessableEntityBody'
+          example:
+            publications:
+              '0':
+                starts_at:
+                - code: 1400
+                  message: Starts at is after ends at
+                shifts:
+                  '1':
+                    position_id:
+                    - code: 1300
+                      message: Specified relation not found
+    Unauthorized:
+      description: The request auth token is missing or invalid (error code 1000).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorsResponse'
+          example:
+            errors:
+            - code: 1000
+              message: Nil JSON web token
+    Forbidden:
+      description: The provided auth token does not authorize this action — either the company has not been marked active for the integration (code 1101) or the request references objects belonging to another company (code 1100).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorsResponse'
+          example:
+            errors:
+            - code: 1101
+              message: Access to integration forbidden
+    Accepted:
+      description: Accepted and queued. Nowsta returns 202 because it cannot always guarantee that an update will be honoured on receipt — in particular it will not remove shifts or shift slots that would unassign staff without coordinator confirmation, and colliding venue/client/uniform/position names are altered to preserve uniqueness. The body carries the id of the queued job.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/PublicationAccepted'
+          example:
+            id: 123
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: 'A per-company integration token issued by Nowsta and retrieved by the customer from the Nowsta UI, then entered into the integrating platform (for example on a settings page). The token is scoped to the single company that purchased the integration and only authorizes operations for that company. Send it as `Authorization: Bearer <token>`. HTTPS is required; cross-origin browser requests are not permitted. Nowsta must first approve a company for the integration — requests on behalf of an unapproved company return 403 with error code 1101.'
+externalDocs:
+  description: Nowsta Integration API reference (archived)
+  url: https://web.archive.org/web/20240603053309/https://developer.nowsta.com/
