@@ -2,19 +2,17 @@
 kin_checks:
   slug: nowsta
   schema_version: 0.15.1
-  scored_at: '2026-08-27'
-  run_ts: 2026-08-27T140727
+  scored_at: '2026-08-28'
+  run_ts: 2026-08-28T221322
   note: Actionable checks only (missed + partial). earned/na are every other check
     in rubric/scoring-0.15.1.yml; counts below let you verify that.
   counts:
     total: 130
-    earned: 38
+    earned: 39
     partial: 9
-    missed: 59
+    missed: 58
     na: 24
   checks:
-  - id: multiple_apis
-    status: missed
   - id: well_known_published
     status: missed
   - id: llms_txt_published
@@ -23,13 +21,13 @@ kin_checks:
     status: missed
   - id: openapi_3_2
     status: missed
-    detail: 0 of 1 openapi documents pass
+    detail: 0 of 6 openapi documents pass
   - id: openapi_3_1
     status: missed
-    detail: 0 of 1 openapi documents pass
+    detail: 0 of 6 openapi documents pass
   - id: webhooks_or_callbacks
     status: missed
-    detail: 0 of 1 openapi documents pass
+    detail: 0 of 6 openapi documents pass
   - id: asyncapi_present
     status: missed
   - id: json_schema_present
