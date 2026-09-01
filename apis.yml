@@ -32,18 +32,18 @@ specificationVersion: '0.23'
 created: '2026-08-01'
 modified: '2026-08-01'
 tags:
-- workforce-management
+- Workforce Management
 - staff-scheduling
 - shift-scheduling
-- time-and-attendance
-- hourly-workforce
+- Time and Attendance
+- Hourly Workforce
 - gig-work
 - event-staffing
-- hospitality
+- Hospitality
 - staffing-agency
-- vendor-management
-- payroll
-- human-resources
+- Vendor Management
+- Payroll
+- Human Resources
 tags_raw:
 - workforce-management
 - staff-scheduling
