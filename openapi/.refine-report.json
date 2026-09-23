@@ -1,0 +1,30 @@
+{
+  "provider": "nowsta",
+  "sources": [
+    "_original/nowsta-integration-openapi.yml"
+  ],
+  "outputs": [
+    "nowsta-clients-api-openapi.yml",
+    "nowsta-events-api-openapi.yml",
+    "nowsta-positions-api-openapi.yml",
+    "nowsta-uniforms-api-openapi.yml",
+    "nowsta-venues-api-openapi.yml",
+    "nowsta-workers-api-openapi.yml"
+  ],
+  "archived": [],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (1 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "nowsta-integration-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: already-registered"
+  ],
+  "skipped": [
+    "nowsta-clients-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nowsta-events-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nowsta-positions-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nowsta-uniforms-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nowsta-venues-api-openapi.yml: previously refined output, superseded by openapi/_original/",
+    "nowsta-workers-api-openapi.yml: previously refined output, superseded by openapi/_original/"
+  ]
+}
