@@ -87,6 +87,16 @@ paths:
           $ref: '#/components/responses/UnprocessableEntity'
 components:
   responses:
+    Unauthorized:
+      description: The request auth token is missing or invalid (error code 1000).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorsResponse'
+          example:
+            errors:
+            - code: 1000
+              message: Nil JSON web token
     Accepted:
       description: Accepted and queued. Nowsta returns 202 because it cannot always guarantee that an update will be honoured on receipt — in particular it will not remove shifts or shift slots that would unassign staff without coordinator confirmation, and colliding venue/client/uniform/position names are altered to preserve uniqueness. The body carries the id of the queued job.
       content:
@@ -122,31 +132,18 @@ components:
             errors:
             - code: 1101
               message: Access to integration forbidden
-    Unauthorized:
-      description: The request auth token is missing or invalid (error code 1000).
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorsResponse'
-          example:
-            errors:
-            - code: 1000
-              message: Nil JSON web token
   schemas:
-    PublicationAccepted:
+    ErrorObject:
       type: object
-      description: The id of the publication request, indicating receipt and insertion into Nowsta's job queue.
+      description: The ERROR_OBJ used throughout every error response - a numeric `code` plus a human-readable `message`.
       properties:
-        id:
+        code:
           type: integer
-          example: 123
-    ErrorsResponse:
-      type: object
-      properties:
-        errors:
-          type: array
-          items:
-            $ref: '#/components/schemas/ErrorObject'
+          description: Nowsta error code. See errors/nowsta-problem-types.yml for the published registry.
+          example: 1201
+        message:
+          type: string
+          example: Parameter cannot be null
     CompanyUserPublication:
       type: object
       description: COMPANY_USER_PUBLICATION — a worker.
@@ -245,6 +242,20 @@ components:
           - 'null'
           maxLength: 255
           description: Documented as `address_2` in the parameter table and as `address2` in the request example; transcribed here as published in the example payload.
+    PublicationAccepted:
+      type: object
+      description: The id of the publication request, indicating receipt and insertion into Nowsta's job queue.
+      properties:
+        id:
+          type: integer
+          example: 123
+    ErrorsResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            $ref: '#/components/schemas/ErrorObject'
     UnprocessableEntityBody:
       type: object
       description: Validation failures keyed by the index of the entity in the submitted `publications` array. Each field maps to an array of ERROR_OBJ. Nowsta publishes the shape but not a strict schema, so this is modelled as a free-form object rather than invented.
@@ -253,17 +264,6 @@ components:
           type: object
           additionalProperties: true
       additionalProperties: true
-    ErrorObject:
-      type: object
-      description: The ERROR_OBJ used throughout every error response - a numeric `code` plus a human-readable `message`.
-      properties:
-        code:
-          type: integer
-          description: Nowsta error code. See errors/nowsta-problem-types.yml for the published registry.
-          example: 1201
-        message:
-          type: string
-          example: Parameter cannot be null
   securitySchemes:
     bearerAuth:
       type: http
