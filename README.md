@@ -64,5 +64,120 @@
 > Full detail: **[Where this data comes from](https://apievangelist.com/about/where-our-data-comes-from)**
 <!-- API-EVANGELIST-PROVENANCE:END -->
 
-Nowsta is a company surfaced via the API Evangelist harvest backlog (source: secondary-market) and added to the network as a stub for full-pipeline profiling.
-- https://forgeglobal.com/nowsta_stock/
+Nowsta is a Brooklyn, New York workforce management platform for hourly, gig and contingent labor, used by more than 25,000 teams across hospitality and food service, events and venues, healthcare, logistics and distribution, education and retail. The platform covers the full shift lifecycle - talent sourcing and onboarding with a built-in ATS, AI-assisted shift scheduling with demand forecasting and templates, GPS/geofenced time and attendance with automated alerts and timesheet approval, labor-cost and compliance reporting, and payroll/accounting handoff - alongside a vendor management module for coordinating staffing agencies. Workers use a dedicated iOS/Android app and the my.nowsta.com portal to claim shifts, set availability and clock in; coordinators work in app.nowsta.com. For partners, Nowsta publishes an allow-listed Integration API that lets an upstream system (event management, CRM, catering or venue software) publish events, shifts, positions, venues, clients, uniforms and workers into Nowsta in bulk.
+
+**Areas:** Workforce Management · staff-scheduling · shift-scheduling · Time and Attendance · Hourly Workforce · GigWork · event-staffing · Hospitality · staffing-agency · Vendor Management · Payroll · Human Resources
+
+## Nowsta on APIs.io
+
+Everything profiled for Nowsta is published on APIs.io rather than in this repository. Start at the provider page — **[apis.io/providers/nowsta/](https://apis.io/providers/nowsta/)** — or go straight to one of the APIs or properties below.
+
+### APIs (6)
+
+- [Nowsta Clients API](https://apis.io/apis/nowsta/nowsta-clients-api/) — Bulk publication of clients referenced by events.
+- [Nowsta Events API](https://apis.io/apis/nowsta/nowsta-events-api/) — Bulk publication of events and their nested shifts.
+- [Nowsta Positions API](https://apis.io/apis/nowsta/nowsta-positions-api/) — Bulk publication of positions referenced by shifts.
+- [Nowsta Uniforms API](https://apis.io/apis/nowsta/nowsta-uniforms-api/) — Bulk publication of uniforms referenced by events.
+- [Nowsta Venues API](https://apis.io/apis/nowsta/nowsta-venues-api/) — Bulk publication of venues referenced by events.
+- [Nowsta Workers API](https://apis.io/apis/nowsta/nowsta-workers-api/) — Bulk publication of company users (workers).
+
+### Published properties
+
+Each property below is a page on APIs.io carrying the machine-readable artifact and what it says.
+
+#### MCP servers (1)
+
+Model Context Protocol servers that expose the API to agents.
+
+- [nowsta](https://apis.io/servers/nowsta/nowsta/)
+
+#### Agentic access (1)
+
+Which operations an agent can call, which act, and which need a human in the loop.
+
+- [Nowsta Agentic Access](https://apis.io/agentic-access/nowsta/nowsta-agentic-access/)
+
+#### Collections (1)
+
+Postman and Open Collection request collections.
+
+- [Nowsta Integration API](https://apis.io/collections/nowsta/open-nowsta-integration/)
+
+#### Overlays (1)
+
+OpenAPI overlays, including conversational phrasing for each operation.
+
+- [Nowsta Integration Overlay](https://apis.io/overlays/nowsta/nowsta-integration-overlay/)
+
+#### Security (2)
+
+Authentication, trust centre, and vulnerability disclosure.
+
+- [Nowsta Authentication](https://apis.io/security/nowsta/nowsta-authentication/)
+- [Nowsta Domain Security](https://apis.io/security/nowsta/nowsta-domain-security/)
+
+## Where to find this API
+
+Links to the company's own pages. This repository publishes no copy of their specifications — the canonical document is theirs and lives at the URLs below.
+
+- [Website](https://www.nowsta.com/)
+- [API reference](https://web.archive.org/web/20240603053309/https://developer.nowsta.com/)
+- [Support](https://community.nowsta.com/support/tickets/new)
+- [Blog](https://www.nowsta.com/blog_category/insights/)
+- [Terms of service](https://www.nowsta.com/terms-and-conditions/)
+- [Privacy policy](https://www.nowsta.com/privacy-policy/)
+- [GitHub](https://github.com/Nowsta)
+- [Status](https://status.nowsta.com/)
+
+## API Evangelist rating
+
+**Kin Score 31.3** — thin · rubric 0.24.0 · scored 2026-10-17
+
+| Facet | Score |
+|---|---|
+| Discoverability | 66.1 |
+| Contract quality | 54.5 |
+| Contract governance | 4.5 |
+| Operational transparency | 18.4 |
+| Developer ergonomics | 32.7 |
+| Access clarity | 13.2 |
+
+**Agent readiness 31.8** — agent-ready
+
+| Agent-readiness dimension | Result |
+|---|---|
+| Spec Presence | yes |
+| Agentic Access | derived (partial credit) |
+| Reversibility Documented | — |
+| MCP Server | — |
+| Auth Clarity | bearer (partial credit) |
+| Idempotency | documented (partial credit) |
+| Error Semantics | documented (partial credit) |
+| OpenAPI Examples | verified |
+| Rate Limit Signal | documented (partial credit) |
+| Event Surface Described | — |
+| Agent Skills | derived (partial credit) |
+| Well Known Catalog | — |
+| Consent Identity | — |
+| Agent Card | — |
+| Dry Run Mode | — |
+| Delegated Identity | — |
+| Protected Resource Metadata | — |
+| Dynamic Client Registration | — |
+| Agentic Commerce | — |
+
+**Regulatory alignment 16.7** — Employment & Payroll
+
+The rubric is published at [github.com/api-evangelist/kin-score](https://github.com/api-evangelist/kin-score). The per-check breakdown behind these numbers — which checks were earned, partial or missed — along with score history and how this provider compares to its peers, is available at [apis.io/providers/nowsta/](https://apis.io/providers/nowsta/).
+
+## How this profile is made
+
+API Evangelist profiles a company's public API surface the way a developer would find it: the website, developer portal and documentation, the specifications it publishes, its public repositories, and its pricing, status and changelog pages. From that it derives the properties above — contracts split per API, workflows, schemas, collections, governance rules, plans and rate limits — and scores them against the published [Kin Score rubric](https://github.com/api-evangelist/kin-score).
+
+The artifacts are published on [APIs.io](https://apis.io), not in this repository. This repository is the public record for Nowsta: the place to say something is wrong, missing or out of date, and to ask for a re-score or a removal.
+
+## Open an issue
+
+- **Something about this listing** — a wrong description, a missing API, a stale artifact or a question about the rating: [open an issue on this repository](https://github.com/api-evangelist/nowsta/issues/new).
+- **A new API, or one that is not in the catalog yet** — [submit it on APIs.io](https://apis.io/add/).
+- **Anything else** — [the APIs.io inbox](https://github.com/api-search/inbox/issues/new) or [info@apievangelist.com](mailto:info@apievangelist.com).
